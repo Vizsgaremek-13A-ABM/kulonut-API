@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('coords', function (Blueprint $table) {
             $table->id();
-            $table->float('x');
-            $table->float('y');
+            $table->float('latitude');
+            $table->float('longitude');
 
             $table->foreignId('polygon_id')->constrained('polygons')->onDelete('no action');
 
