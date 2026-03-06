@@ -36,11 +36,6 @@ class Project extends Model
         'eutility_statement_issue_date' => 'date',
         'road_construction_permit_date' => 'date',
         'water_rights_permit_date' => 'date',
-        'road_construction_plan' => 'boolean',
-        'water_network_plan' => 'boolean',
-        'sewage_plan' => 'boolean',
-        'stormwater_drainage_plan' => 'boolean',
-        'public_lighting_plan' => 'boolean',
     ];
 
     public function designer()
