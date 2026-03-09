@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PolygonResource;
 use App\Models\Polygon;
 use Illuminate\Http\Request;
 
@@ -12,15 +13,7 @@ class PolygonController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return PolygonResource::collection(Polygon::all());
     }
 
     /**
@@ -28,7 +21,13 @@ class PolygonController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:50',
+        ]);
+
+        $polygon = Polygon::create($validated);
+
+        return (new PolygonResource($polygon))->response()->setStatusCode(201);
     }
 
     /**
@@ -36,15 +35,7 @@ class PolygonController extends Controller
      */
     public function show(Polygon $polygon)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Polygon $polygon)
-    {
-        //
+        return new PolygonResource($polygon);
     }
 
     /**
@@ -52,7 +43,13 @@ class PolygonController extends Controller
      */
     public function update(Request $request, Polygon $polygon)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:50',
+        ]);
+
+        $polygon->update($validated);
+
+        return new PolygonResource($polygon);
     }
 
     /**
@@ -60,6 +57,7 @@ class PolygonController extends Controller
      */
     public function destroy(Polygon $polygon)
     {
-        //
+        $polygon->delete();
+        return response()->noContent();
     }
 }

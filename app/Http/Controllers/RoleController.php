@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use Illuminate\Http\Request;
 
@@ -12,15 +13,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return RoleResource::collection(Role::all());
     }
 
     /**
@@ -28,7 +21,15 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'role_name' => 'required|string|max:50',
+            'description' => 'nullable|string',
+            'level' => 'required|integer',
+        ]);
+
+        $role = Role::create($validated);
+
+        return (new RoleResource($role))->response()->setStatusCode(201);
     }
 
     /**
@@ -36,15 +37,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Role $role)
-    {
-        //
+        return new RoleResource($role);
     }
 
     /**
@@ -52,7 +45,15 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        //
+        $validated = $request->validate([
+            'role_name' => 'sometimes|required|string|max:50',
+            'description' => 'sometimes|nullable|string',
+            'level' => 'sometimes|required|integer',
+        ]);
+
+        $role->update($validated);
+
+        return new RoleResource($role);
     }
 
     /**
@@ -60,6 +61,7 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        $role->delete();
+        return response()->noContent();
     }
 }

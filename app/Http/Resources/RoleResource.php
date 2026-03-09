@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CoordResource extends JsonResource
+class RoleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,9 @@ class CoordResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'polygon_id' => $this->polygon_id,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'role_name' => $this->role_name,
+            'description' => $this->description,
+            'level' => $this->level,
         ];
     }
 }

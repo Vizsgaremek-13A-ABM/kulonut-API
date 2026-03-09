@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Designer;
+use App\Http\Resources\DesignerResource;
 use Illuminate\Http\Request;
 
 class DesignerController extends Controller
@@ -12,15 +13,7 @@ class DesignerController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return DesignerResource::collection(Designer::all());
     }
 
     /**
@@ -28,7 +21,13 @@ class DesignerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:50',
+        ]);
+
+        $designer = Designer::create($validated);
+
+        return (new DesignerResource($designer))->response()->setStatusCode(201);
     }
 
     /**
@@ -36,15 +35,7 @@ class DesignerController extends Controller
      */
     public function show(Designer $designer)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Designer $designer)
-    {
-        //
+        return new DesignerResource($designer);
     }
 
     /**
@@ -52,7 +43,13 @@ class DesignerController extends Controller
      */
     public function update(Request $request, Designer $designer)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:50',
+        ]);
+
+        $designer->update($validated);
+
+        return new DesignerResource($designer);
     }
 
     /**
@@ -60,6 +57,7 @@ class DesignerController extends Controller
      */
     public function destroy(Designer $designer)
     {
-        //
+        $designer->delete();
+        return response()->noContent();
     }
 }

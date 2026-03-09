@@ -11,6 +11,10 @@ class Role extends Model
 
     protected $fillable = ['role_name', 'description', 'level'];
 
+    protected $casts = [
+        'level' => 'integer',
+    ];
+
     public function users()
     {
         return $this->hasMany(User::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GeneralDesignerResource;
 use App\Models\GeneralDesigner;
 use Illuminate\Http\Request;
 
@@ -12,15 +13,7 @@ class GeneralDesignerController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return GeneralDesignerResource::collection(GeneralDesigner::all());
     }
 
     /**
@@ -28,7 +21,13 @@ class GeneralDesignerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:50',
+        ]);
+
+        $generalDesigner = GeneralDesigner::create($validated);
+
+        return (new GeneralDesignerResource($generalDesigner))->response()->setStatusCode(201);
     }
 
     /**
@@ -36,15 +35,7 @@ class GeneralDesignerController extends Controller
      */
     public function show(GeneralDesigner $generalDesigner)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(GeneralDesigner $generalDesigner)
-    {
-        //
+        return new GeneralDesignerResource($generalDesigner);
     }
 
     /**
@@ -52,7 +43,13 @@ class GeneralDesignerController extends Controller
      */
     public function update(Request $request, GeneralDesigner $generalDesigner)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:50',
+        ]);
+
+        $generalDesigner->update($validated);
+
+        return new GeneralDesignerResource($generalDesigner);
     }
 
     /**
@@ -60,6 +57,7 @@ class GeneralDesignerController extends Controller
      */
     public function destroy(GeneralDesigner $generalDesigner)
     {
-        //
+        $generalDesigner->delete();
+        return response()->noContent();
     }
 }

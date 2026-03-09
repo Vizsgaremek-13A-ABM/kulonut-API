@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -12,15 +13,9 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $projects = Project::with(['designer', 'generalDesigner', 'polygons'])->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return ProjectResource::collection($projects);
     }
 
     /**
@@ -28,7 +23,37 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'project_name' => 'required|string|max:50',
+            'work_number' => 'nullable|string|max:50',
+            'folder_number' => 'nullable|string|max:50',
+            'client' => 'nullable|string|max:255',
+
+            'designer_id' => 'nullable|exists:designers,id',
+            'general_designer_id' => 'nullable|exists:general_designers,id',
+
+            'plan_issue_date' => 'nullable|date',
+            'eutility_statement_issue_date' => 'nullable|date',
+            'road_construction_permit_date' => 'nullable|date',
+            'water_rights_permit_date' => 'nullable|date',
+
+            'geodesy' => 'nullable|string',
+            'road_construction_plan' => 'nullable|string',
+            'water_network_plan' => 'nullable|string',
+            'sewage_plan' => 'nullable|string',
+            'stormwater_drainage_plan' => 'nullable|string',
+            'public_lighting_plan' => 'nullable|string',
+            'other_work_parts' => 'nullable|string',
+
+            'notes' => 'nullable|string',
+            'min_role_level' => 'nullable|integer',
+        ]);
+
+        $project = Project::create($validated);
+
+        $project->load(['designer', 'generalDesigner', 'polygons']);
+
+        return (new ProjectResource($project))->response()->setStatusCode(201);
     }
 
     /**
@@ -36,15 +61,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
-    }
+        $project->load(['designer', 'generalDesigner', 'polygons']);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Project $project)
-    {
-        //
+        return new ProjectResource($project);
     }
 
     /**
@@ -52,7 +71,37 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //
+        $validated = $request->validate([
+            'project_name' => 'sometimes|required|string|max:50',
+            'work_number' => 'sometimes|nullable|string|max:50',
+            'folder_number' => 'sometimes|nullable|string|max:50',
+            'client' => 'sometimes|nullable|string|max:255',
+
+            'designer_id' => 'sometimes|nullable|exists:designers,id',
+            'general_designer_id' => 'sometimes|nullable|exists:general_designers,id',
+
+            'plan_issue_date' => 'sometimes|nullable|date',
+            'eutility_statement_issue_date' => 'sometimes|nullable|date',
+            'road_construction_permit_date' => 'sometimes|nullable|date',
+            'water_rights_permit_date' => 'sometimes|nullable|date',
+
+            'geodesy' => 'sometimes|nullable|string',
+            'road_construction_plan' => 'sometimes|nullable|string',
+            'water_network_plan' => 'sometimes|nullable|string',
+            'sewage_plan' => 'sometimes|nullable|string',
+            'stormwater_drainage_plan' => 'sometimes|nullable|string',
+            'public_lighting_plan' => 'sometimes|nullable|string',
+            'other_work_parts' => 'sometimes|nullable|string',
+
+            'notes' => 'sometimes|nullable|string',
+            'min_role_level' => 'sometimes|nullable|integer',
+        ]);
+
+        $project->update($validated);
+
+        $project->load(['designer', 'generalDesigner', 'polygons']);
+
+        return new ProjectResource($project);
     }
 
     /**
@@ -60,6 +109,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+        return response()->noContent();
     }
 }
