@@ -1,0 +1,209 @@
+{
+  "info": {
+    "name": "Kulon UT API",
+    "_postman_id": "de97d5f6-0f19-4f3b-9f8f-8b23f7988c24",
+    "description": "CRUD test collection for Kulon UT API routes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "roleId", "value": "1" },
+    { "key": "designerId", "value": "1" },
+    { "key": "generalDesignerId", "value": "1" },
+    { "key": "polygonId", "value": "1" },
+    { "key": "coordId", "value": "1" },
+    { "key": "projectId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "List Roles",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/roles" }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role_name\": \"Reviewer\",\n  \"description\": \"Can review projects\",\n  \"level\": 5\n}"
+            },
+            "url": "{{baseUrl}}/api/roles"
+          }
+        },
+        {
+          "name": "Show Role",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/roles/{{roleId}}" }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated role description\"\n}"
+            },
+            "url": "{{baseUrl}}/api/roles/{{roleId}}"
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/roles/{{roleId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Designers",
+      "item": [
+        { "name": "List Designers", "request": { "method": "GET", "url": "{{baseUrl}}/api/designers" } },
+        {
+          "name": "Create Designer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Designer Test\"\n}" },
+            "url": "{{baseUrl}}/api/designers"
+          }
+        },
+        { "name": "Show Designer", "request": { "method": "GET", "url": "{{baseUrl}}/api/designers/{{designerId}}" } },
+        {
+          "name": "Update Designer",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Designer Updated\"\n}" },
+            "url": "{{baseUrl}}/api/designers/{{designerId}}"
+          }
+        },
+        { "name": "Delete Designer", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/designers/{{designerId}}" } }
+      ]
+    },
+    {
+      "name": "General Designers",
+      "item": [
+        { "name": "List General Designers", "request": { "method": "GET", "url": "{{baseUrl}}/api/general-designers" } },
+        {
+          "name": "Create General Designer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"General Designer Test\"\n}" },
+            "url": "{{baseUrl}}/api/general-designers"
+          }
+        },
+        { "name": "Show General Designer", "request": { "method": "GET", "url": "{{baseUrl}}/api/general-designers/{{generalDesignerId}}" } },
+        {
+          "name": "Update General Designer",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"General Designer Updated\"\n}" },
+            "url": "{{baseUrl}}/api/general-designers/{{generalDesignerId}}"
+          }
+        },
+        { "name": "Delete General Designer", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/general-designers/{{generalDesignerId}}" } }
+      ]
+    },
+    {
+      "name": "Polygons",
+      "item": [
+        { "name": "List Polygons", "request": { "method": "GET", "url": "{{baseUrl}}/api/polygons" } },
+        {
+          "name": "Create Polygon",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Polygon Test\"\n}" },
+            "url": "{{baseUrl}}/api/polygons"
+          }
+        },
+        { "name": "Show Polygon", "request": { "method": "GET", "url": "{{baseUrl}}/api/polygons/{{polygonId}}" } },
+        {
+          "name": "Update Polygon",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Polygon Updated\"\n}" },
+            "url": "{{baseUrl}}/api/polygons/{{polygonId}}"
+          }
+        },
+        { "name": "Delete Polygon", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/polygons/{{polygonId}}" } }
+      ]
+    },
+    {
+      "name": "Coords",
+      "item": [
+        { "name": "List Coords", "request": { "method": "GET", "url": "{{baseUrl}}/api/coords" } },
+        {
+          "name": "Create Coord",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"polygon_id\": {{polygonId}},\n  \"latitude\": 47.4979,\n  \"longitude\": 19.0402\n}"
+            },
+            "url": "{{baseUrl}}/api/coords"
+          }
+        },
+        { "name": "Show Coord", "request": { "method": "GET", "url": "{{baseUrl}}/api/coords/{{coordId}}" } },
+        {
+          "name": "Update Coord",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 47.5079,\n  \"longitude\": 19.0456\n}"
+            },
+            "url": "{{baseUrl}}/api/coords/{{coordId}}"
+          }
+        },
+        { "name": "Delete Coord", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/coords/{{coordId}}" } }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        { "name": "List Projects", "request": { "method": "GET", "url": "{{baseUrl}}/api/projects" } },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project_name\": \"Project Test\",\n  \"work_number\": \"WN-900\",\n  \"folder_number\": \"FN-900\",\n  \"client\": \"Client Test\",\n  \"designer_id\": {{designerId}},\n  \"general_designer_id\": {{generalDesignerId}},\n  \"plan_issue_date\": \"2026-03-10\",\n  \"eutility_statement_issue_date\": \"2026-03-09\",\n  \"road_construction_permit_date\": \"2026-03-08\",\n  \"water_rights_permit_date\": \"2026-03-07\",\n  \"geodesy\": \"Prepared\",\n  \"road_construction_plan\": true,\n  \"water_network_plan\": false,\n  \"sewage_plan\": true,\n  \"stormwater_drainage_plan\": false,\n  \"public_lighting_plan\": true,\n  \"other_work_parts\": \"None\",\n  \"notes\": \"API test\",\n  \"min_role_level\": 3\n}"
+            },
+            "url": "{{baseUrl}}/api/projects"
+          }
+        },
+        { "name": "Show Project", "request": { "method": "GET", "url": "{{baseUrl}}/api/projects/{{projectId}}" } },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client\": \"Updated Client\",\n  \"road_construction_plan\": false,\n  \"min_role_level\": 4\n}"
+            },
+            "url": "{{baseUrl}}/api/projects/{{projectId}}"
+          }
+        },
+        { "name": "Delete Project", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/projects/{{projectId}}" } }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/up" } },
+        { "name": "Welcome", "request": { "method": "GET", "url": "{{baseUrl}}/" } }
+      ]
+    }
+  ]
+}
