@@ -18,9 +18,9 @@ return new class extends Migration
             $table->date('plan_issue_date')->nullable();
             $table->string('client', 100)->nullable();
 
-            $table->foreignId('designer_id')->constrained('designers')->onDelete('no action');
+            $table->foreignId('designer_id')->constrained('designers')->restrictOnDelete();
 
-            $table->foreignId('general_designer_id')->nullable()->constrained('general_designers')->onDelete('no action');
+            $table->foreignId('general_designer_id')->nullable()->constrained('general_designers')->nullOnDelete();
 
             $table->string('geodesy', 100)->nullable();
             $table->boolean('road_construction_plan')->nullable();

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('coords', function (Blueprint $table) {
             $table->id();
-            $table->float('x');
-            $table->float('y');
+            $table->decimal('latitude');
+            $table->decimal('longitude');
 
-            $table->foreignId('polygon_id')->constrained('polygons')->onDelete('no action');
+            $table->foreignId('polygon_id')->constrained('polygons')->cascadeOnDelete();
 
             $table->timestamps();
         });

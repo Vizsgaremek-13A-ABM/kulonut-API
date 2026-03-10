@@ -9,7 +9,12 @@ class Coord extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['x', 'y', 'polygon_id'];
+    protected $fillable = ['latitude', 'longitude', 'polygon_id'];
+
+    protected $casts = [
+        'latitude' => 'float',
+        'longitude' => 'float',
+    ];
 
     public function polygon()
     {
