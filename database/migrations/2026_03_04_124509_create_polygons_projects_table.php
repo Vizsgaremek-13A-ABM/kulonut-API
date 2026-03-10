@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('polygons_projects', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('polygon_id')->constrained('polygons')->onDelete('no action');
+            $table->foreignId('polygon_id')->constrained('polygons')->cascadeOnDelete();
 
-            $table->foreignId('project_id')->constrained('projects')->onDelete('no action');
+            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
         });
     }
 

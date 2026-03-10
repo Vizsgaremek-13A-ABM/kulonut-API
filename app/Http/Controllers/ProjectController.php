@@ -46,7 +46,7 @@ class ProjectController extends Controller
             'other_work_parts' => 'nullable|string',
 
             'notes' => 'nullable|string',
-            'min_role_level' => 'required|integer',
+            'min_role_level' => 'required|integer|between:-128,127',
         ]);
 
         $project = Project::create($validated);
@@ -94,7 +94,7 @@ class ProjectController extends Controller
             'other_work_parts' => 'sometimes|nullable|string',
 
             'notes' => 'sometimes|nullable|string',
-            'min_role_level' => 'sometimes|required|integer',
+            'min_role_level' => 'sometimes|required|integer|between:-128,127',
         ]);
 
         $project->update($validated);

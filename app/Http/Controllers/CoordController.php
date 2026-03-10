@@ -23,8 +23,8 @@ class CoordController extends Controller
     {
         $validated = $request->validate([
             'polygon_id' => 'required|exists:polygons,id',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
         ]);
         $coord = Coord::create($validated);
 
@@ -46,8 +46,8 @@ class CoordController extends Controller
     {
         $validated = $request->validate([
             'polygon_id' => 'sometimes|required|exists:polygons,id',
-            'latitude' => 'sometimes|required|numeric',
-            'longitude' => 'sometimes|required|numeric',
+            'latitude' => 'sometimes|required|numeric|between:-90,90',
+            'longitude' => 'sometimes|required|numeric|between:-180,180',
         ]);
 
         $coord->update($validated);

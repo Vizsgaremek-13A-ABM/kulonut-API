@@ -11,6 +11,11 @@ class Coord extends Model
 
     protected $fillable = ['latitude', 'longitude', 'polygon_id'];
 
+    protected $casts = [
+        'latitude' => 'float',
+        'longitude' => 'float',
+    ];
+
     public function polygon()
     {
         return $this->belongsTo(Polygon::class);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Designer;
 use App\Http\Resources\DesignerResource;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class DesignerController extends Controller
@@ -57,7 +58,14 @@ class DesignerController extends Controller
      */
     public function destroy(Designer $designer)
     {
-        $designer->delete();
-        return response()->noContent();
+        try {
+            $designer->delete();
+
+            return response()->noContent();
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => 'Designer cannot be deleted because one or more projects reference it.',
+            ], 409);
+        }
     }
 }
