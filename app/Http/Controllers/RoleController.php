@@ -23,7 +23,7 @@ class RoleController extends Controller
     {
         $validated = $request->validate([
             'role_name' => 'required|string|max:50',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'level' => 'required|integer',
         ]);
 
@@ -47,7 +47,7 @@ class RoleController extends Controller
     {
         $validated = $request->validate([
             'role_name' => 'sometimes|required|string|max:50',
-            'description' => 'sometimes|nullable|string',
+            'description' => 'sometimes|required|string',
             'level' => 'sometimes|required|integer',
         ]);
 

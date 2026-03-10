@@ -13,10 +13,10 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('coords', CoordController::class)->except(['create', 'edit']);
-Route::apiResource('polygons', PolygonController::class)->except(['create', 'edit']);
-Route::apiResource('designers', DesignerController::class)->except(['create', 'edit']);
-Route::apiResource('general-designers', GeneralDesignerController::class)->except(['create', 'edit']);
-Route::apiResource('roles', RoleController::class)->except(['create', 'edit']);
-Route::apiResource('projects', ProjectController::class)->except(['create', 'edit']);
+Route::apiResource('coords', CoordController::class);
+Route::apiResource('polygons', PolygonController::class);
+Route::apiResource('designers', DesignerController::class);
+Route::apiResource('general-designers', GeneralDesignerController::class);
+Route::apiResource('roles', RoleController::class);
+Route::apiResource('projects', ProjectController::class);
 
