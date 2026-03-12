@@ -13,10 +13,10 @@ class Project extends Model
         'project_name',
         'work_number',
         'plan_issue_date',
-        'client',
+        'client_id',
         'designer_id',
         'general_designer_id',
-        'geodesy',
+        'geodesy_id',
         'road_construction_plan',
         'water_network_plan',
         'sewage_plan',
@@ -56,5 +56,15 @@ class Project extends Model
     public function polygons()
     {
         return $this->belongsToMany(Polygon::class, 'polygons_projects');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function geodesy()
+    {
+        return $this->belongsTo(Geodesy::class);
     }
 }

@@ -16,13 +16,12 @@ return new class extends Migration
             $table->string('project_name');
             $table->string('work_number', 100)->nullable();
             $table->date('plan_issue_date')->nullable();
-            $table->string('client', 100)->nullable();
 
-            $table->foreignId('designer_id')->constrained('designers')->restrictOnDelete();
+            $table->foreignId('client_id')->constrained('clients')->restrictOnDelete();
+            $table->foreignId('designer_id')->nullable()->constrained('designers')->nullOnDelete();
+            $table->foreignId('general_designer_id')->constrained('general_designers')->restrictOnDelete();
+            $table->foreignId('geodesy_id')->nullable()->constrained('geodesies')->nullOnDelete();
 
-            $table->foreignId('general_designer_id')->nullable()->constrained('general_designers')->nullOnDelete();
-
-            $table->string('geodesy', 100)->nullable();
             $table->boolean('road_construction_plan')->nullable();
             $table->boolean('water_network_plan')->nullable();
             $table->boolean('sewage_plan')->nullable();
