@@ -11,7 +11,7 @@ data:
   DB_CONNECTION: "mysql"
   DB_HOST: "jcloud02.jedlik.eu"
   DB_PORT: "3306"
-  DB_DATABASE: "kiss_martin_db_2"
+  DB_DATABASE: "kiss_martin2_db_2"
 
   SESSION_DRIVER: "database"
   SESSION_LIFETIME: "120"
