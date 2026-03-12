@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             DesignerSeeder::class,
             GeneralDesignerSeeder::class,
+            ClientSeeder::class,
+            GeodesySeeder::class,
             PolygonSeeder::class,
             ProjectSeeder::class,
             CoordSeeder::class,
