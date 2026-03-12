@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kulonut-api-config
+data:
+  APP_NAME: "KulonUTAPI"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "https://kulonutapi.jcloud.jedlik.cloud"
+
+  DB_CONNECTION: "mysql"
+  DB_HOST: "jcloud02.jedlik.eu"
+  DB_PORT: "3306"
+  DB_DATABASE: "kiss_martin_db_2"
+
+  SESSION_DRIVER: "database"
+  SESSION_LIFETIME: "120"
+  SESSION_ENCRYPT: "false"
+  SESSION_PATH: "/"
+  SESSION_DOMAIN: "null"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kulonut-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kulonut-api
+  template:
+    metadata:
+      labels:
+        app: kulonut-api
+    spec:
+      imagePullSecrets:
+        - name: ghcr-login-secret
+      containers:
+        - name: kulonut-api
+          image: ghcr.io/vizsgaremek-13a-abm/kulonut-API:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: kulonut-api-config
+            - secretRef:
+                name: kulonut-api-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kulonut-api-svc
+spec:
+  selector:
+    app: kulonut-api
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      name: http
+      targetPort: 8000
+      port: 80
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kulonut-api-cert
+spec:
+  secretName: kulonut-api-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - kulonutapi.jcloud.jedlik.cloud
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kulonut-api-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - kulonutapi.jcloud.jedlik.cloud
+      secretName: kulonut-api-tls
+  rules:
+    - host: kulonutapi.jcloud.jedlik.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kulonut-api-svc
+                port:
+                  number: 80
