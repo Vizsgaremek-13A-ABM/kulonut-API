@@ -38,7 +38,7 @@ spec:
         - name: ghcr-login-secret
       containers:
         - name: kulonut-api
-          image: ghcr.io/vizsgaremek-13a-abm/kulonut-API:latest
+          image: ghcr.io/vizsgaremek-13a-abm/kulonut-api:latest
           imagePullPolicy: Always
           ports:
             - name: http
