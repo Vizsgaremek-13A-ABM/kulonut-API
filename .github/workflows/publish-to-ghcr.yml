@@ -32,7 +32,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/vizsgaremek-13a-abm/kulonut-API:${{ env.IMAGE_TAG }} , ghcr.io/vizsgaremek-13a-abm/kulonut-API:latest
+          tags: ghcr.io/vizsgaremek-13a-abm/kulonut-api:${{ env.IMAGE_TAG }} , ghcr.io/vizsgaremek-13a-abm/kulonut-api:latest
           file: ./Dockerfile
 
   deploy:
