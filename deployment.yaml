@@ -23,16 +23,16 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kulonut-api
+  name: vizsgaremek-kulonut-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kulonut-api
+      app: vizsgaremek-kulonut-api
   template:
     metadata:
       labels:
-        app: kulonut-api
+        app: vizsgaremek-kulonut-api
     spec:
       imagePullSecrets:
         - name: ghcr-login-secret
@@ -56,7 +56,7 @@ metadata:
   name: kulonut-api-svc
 spec:
   selector:
-    app: kulonut-api
+    app: vizsgaremek-kulonut-api
   type: ClusterIP
   ports:
     - protocol: TCP
