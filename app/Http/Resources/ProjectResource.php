@@ -4,8 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\ClientResource;
-use App\Http\Resources\GeodesyResource;
 
 class ProjectResource extends JsonResource
 {
@@ -22,8 +20,10 @@ class ProjectResource extends JsonResource
             'work_number' => $this->work_number,
             'folder_number' => $this->folder_number,
 
-            'client' => new ClientResource($this->whenLoaded('client')),
-            'geodesy' => new GeodesyResource($this->whenLoaded('geodesy')),
+            'designer' => $this->relationLoaded('designer') ? $this->designer->name : null,
+            'general_designer' => $this->relationLoaded('generalDesigner') ? $this->generalDesigner->name : null,
+            'client' => $this->relationLoaded('client') ? $this->client->name : null,
+            'geodesy' => $this->relationLoaded('geodesy') ? $this->geodesy->name : null,
 
             'plan_issue_date' => $this->plan_issue_date?->format('Y-m-d'),
             'eutility_statement_issue_date' => $this->eutility_statement_issue_date?->format('Y-m-d'),
@@ -39,11 +39,6 @@ class ProjectResource extends JsonResource
             'other_work_parts' => $this->other_work_parts,
             'notes' => $this->notes,
             'min_role_level' => $this->min_role_level,
-
-            'designer' => new DesignerResource($this->whenLoaded('designer')),
-            'general_designer' => new GeneralDesignerResource($this->whenLoaded('generalDesigner')),
-
-            'polygons' => PolygonResource::collection($this->whenLoaded('polygons')),
         ];
     }
 }

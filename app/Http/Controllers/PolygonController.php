@@ -13,7 +13,8 @@ class PolygonController extends Controller
      */
     public function index()
     {
-        return PolygonResource::collection(Polygon::all());
+        $polygons = Polygon::with('coords')->get();
+        return PolygonResource::collection($polygons);
     }
 
     /**

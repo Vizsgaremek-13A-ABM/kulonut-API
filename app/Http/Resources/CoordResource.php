@@ -15,10 +15,8 @@ class CoordResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'polygon_id' => $this->polygon_id,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'lat' => $this->latitude,
+            'lng' => $this->longitude,
         ];
     }
 }
