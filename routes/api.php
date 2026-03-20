@@ -21,12 +21,17 @@ Route::middleware('auth:sanctum')->controller(AuthController::class)->group(func
     Route::get('/user', 'me');
 });
 
-Route::apiResource('coords', CoordController::class);
-Route::apiResource('polygons', PolygonController::class);
-Route::apiResource('designers', DesignerController::class);
-Route::apiResource('general-designers', GeneralDesignerController::class);
-Route::apiResource('roles', RoleController::class);
+Route::controller(ProjectController::class)->group(function () {
+    Route::get('/projects/map', 'mapView');
+    Route::get('/projects/{project}/polygons', 'polygons');
+});
+
 Route::apiResource('projects', ProjectController::class);
+Route::apiResource('polygons', PolygonController::class);
+Route::apiResource('coords', CoordController::class);
+Route::apiResource('roles', RoleController::class);
 Route::apiResource('geodesies', GeodesyController::class);
 Route::apiResource('clients', ClientController::class);
+Route::apiResource('general-designers', GeneralDesignerController::class);
+Route::apiResource('designers', DesignerController::class);
 

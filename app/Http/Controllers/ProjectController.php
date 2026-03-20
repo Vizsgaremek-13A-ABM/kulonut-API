@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PolygonResource;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -13,9 +14,28 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['client', 'geodesy', 'designer', 'generalDesigner', 'polygons'])->get();
+        $projects = Project::with(['client', 'geodesy', 'designer', 'generalDesigner'])->get();
 
         return ProjectResource::collection($projects);
+    }
+
+    public function mapView()
+    {
+        $projects = Project::with('polygons:id')->get();
+
+        return $projects->map(fn($project) => [
+            'project_id' => $project->id,
+            'project_name' => $project->project_name,
+            'plan_issue_date' => $project->plan_issue_date?->format('Y-m-d'),
+            'polygon_ids' => $project->polygons->pluck('id')->values(),
+        ]);
+    }
+
+    public function polygons(Project $project)
+    {
+        $polygons = $project->polygons()->with('coords')->get();
+
+        return PolygonResource::collection($polygons);
     }
 
     /**
@@ -54,8 +74,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load(['client', 'geodesy', 'designer', 'generalDesigner', 'polygons']);
-        return new ProjectResource($project);
+        return new ProjectResource($project->load(['client', 'geodesy', 'designer', 'generalDesigner']));
     }
 
     /**
@@ -84,7 +103,7 @@ class ProjectController extends Controller
 
         $project->update($validated);
 
-        $project->load(['client', 'geodesy', 'designer', 'generalDesigner', 'polygons']);
+        $project->load(['client', 'geodesy', 'designer', 'generalDesigner']);
         return new ProjectResource($project);
     }
 

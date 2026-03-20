@@ -15,8 +15,9 @@ class PolygonResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'polygon_id' => $this->id,
             'name' => $this->name,
+            'coordinates' => CoordResource::collection($this->whenLoaded('coords')),
         ];
     }
 }
