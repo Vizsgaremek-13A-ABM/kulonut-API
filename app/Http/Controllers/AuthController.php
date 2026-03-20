@@ -18,7 +18,6 @@ class AuthController extends Controller
             'profile_icon' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'nullable|exists:roles,id',
         ]);
 
         $user = User::create($validated);
@@ -29,7 +28,7 @@ class AuthController extends Controller
             'message' => 'User registered successfully.',
             'token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user->load('role'),
+            'user' => new UserResource($user->load('role')),
         ], 201);
     }
 
@@ -49,15 +48,22 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'Login successful.',
-            'token'   => $user->createToken('auth_token')->plainTextToken,
-            'user'    => new UserResource($user->load('role')),
+            'message'    => 'Login successful.',
+            'token'      => $user->createToken('auth_token')->plainTextToken,
+            'token_type' => 'Bearer',
+            'user'       => new UserResource($user->load('role')),
         ]);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->currentAccessToken();
+
+        if ($token) {
+            $token->delete();
+        } else {
+            $request->user()->tokens()->delete();
+        }
 
         return response()->json(['message' => 'Logout successful.']);
     }

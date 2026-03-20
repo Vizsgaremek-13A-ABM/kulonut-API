@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         for ($index = 1; $index <= 10; $index++) {
-            Role::create([
+            Role::updateOrCreate(['id' => $index], [
                 'role_name' => "Role {$index}",
                 'description' => "Seeded role {$index}",
                 'level' => $index,
