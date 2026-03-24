@@ -33,7 +33,7 @@ class Project extends Model
 
     protected $casts = [
         'plan_issue_date' => 'date',
-        'eutility_statement_issue_date' => 'date',
+        'utility_statement_issue_date' => 'date',
         'road_construction_permit_date' => 'date',
         'water_rights_permit_date' => 'date',
         'road_construction_plan' => 'boolean',
