@@ -58,6 +58,15 @@ class ProjectController extends Controller
             'water_network_plan' => 'nullable|boolean',
             'sewage_plan' => 'nullable|boolean',
             'stormwater_drainage_plan' => 'nullable|boolean',
+            'public_lighting_plan' => 'nullable|boolean',
+
+            'utility_statement_issue_date' => 'nullable|date',
+            'road_construction_permit_date' => 'nullable|date',
+            'water_rights_permit_date' => 'nullable|date',
+            
+            'notes' => 'nullable|string',
+            'other_work_parts' => 'nullable|string',
+            'folder_number' => 'nullable|string|max:100',
 
             'min_role_level' => 'required|integer|between:-128,127',
         ]);
@@ -97,6 +106,14 @@ class ProjectController extends Controller
             'water_network_plan' => 'sometimes|nullable|boolean',
             'sewage_plan' => 'sometimes|nullable|boolean',
             'stormwater_drainage_plan' => 'sometimes|nullable|boolean',
+            'public_lighting_plan' => 'sometimes|nullable|boolean',
+            
+            'utility_statement_issue_date' => 'sometimes|nullable|date',
+            'road_construction_permit_date' => 'sometimes|nullable|date',
+            'water_rights_permit_date' => 'sometimes|nullable|date',
+            'notes' => 'sometimes|nullable|string',
+            'other_work_parts' => 'sometimes|nullable|string',
+            'folder_number' => 'sometimes|nullable|string|max:100',
 
             'min_role_level' => 'sometimes|required|integer|between:-128,127',
         ]);

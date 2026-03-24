@@ -30,7 +30,7 @@ return new class extends Migration
 
             $table->string('other_work_parts')->nullable();
 
-            $table->date('eutility_statement_issue_date')->nullable();
+            $table->date('utility_statement_issue_date')->nullable();
             $table->date('road_construction_permit_date')->nullable();
             $table->date('water_rights_permit_date')->nullable();
 

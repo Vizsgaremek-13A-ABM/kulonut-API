@@ -23,7 +23,7 @@ class Project extends Model
         'stormwater_drainage_plan',
         'public_lighting_plan',
         'other_work_parts',
-        'eutility_statement_issue_date',
+        'utility_statement_issue_date',
         'road_construction_permit_date',
         'water_rights_permit_date',
         'notes',
