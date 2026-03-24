@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - kube
+      - 19-fix-scramble-access-on-jcloud
   workflow_dispatch:
 
 jobs:
