@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - kube
+      - 24-create-a-working-cors-policy
   workflow_dispatch:
 
 jobs:
