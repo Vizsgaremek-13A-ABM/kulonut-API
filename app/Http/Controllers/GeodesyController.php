@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\GeodesyResource;
 use App\Models\Geodesy;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class GeodesyController extends Controller
@@ -14,6 +15,16 @@ class GeodesyController extends Controller
     public function index()
     {
         return GeodesyResource::collection(Geodesy::all());
+    }
+
+    /**
+     * Gets all the projects related to a geodesy.
+     */
+    public function getProjects(Geodesy $geodesy)
+    {
+        return response()->json(
+            $geodesy->projects()->select('id', 'project_name', 'plan_issue_date')->get()
+        );
     }
 
     /**
@@ -57,7 +68,14 @@ class GeodesyController extends Controller
      */
     public function destroy(Geodesy $geodesy)
     {
-        $geodesy->delete();
-        return response()->noContent();
+        try {
+            $geodesy->delete();
+
+            return response()->noContent();
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => 'Geodesy cannot be deleted because one or more projects reference it.',
+            ], 409);
+        }
     }
 }

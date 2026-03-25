@@ -68,4 +68,14 @@ class DesignerController extends Controller
             ], 409);
         }
     }
+
+    /**
+     * Gets all the projects related to a designer.
+     */
+    public function getProjects(Designer $designer)
+    {
+        return response()->json(
+            $designer->projects()->select('id', 'project_name', 'plan_issue_date')->get()
+        );
+    }
 }

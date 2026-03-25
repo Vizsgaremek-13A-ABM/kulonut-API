@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -14,6 +15,16 @@ class ClientController extends Controller
     public function index()
     {
         return ClientResource::collection(Client::all());
+    }
+
+    /**
+     * Gets all the projects related to a client.
+     */
+    public function getProjects(Client $client)
+    {
+        return response()->json(
+            $client->projects()->select('id', 'project_name', 'plan_issue_date')->get()
+        );
     }
 
     /**
@@ -57,7 +68,14 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        $client->delete();
-        return response()->noContent();
+        try {
+            $client->delete();
+
+            return response()->noContent();
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => 'Client cannot be deleted because one or more projects reference it.',
+            ], 409);
+        }
     }
 }

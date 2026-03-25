@@ -30,8 +30,16 @@ Route::apiResource('projects', ProjectController::class);
 Route::apiResource('polygons', PolygonController::class);
 Route::apiResource('coords', CoordController::class);
 Route::apiResource('roles', RoleController::class);
-Route::apiResource('geodesies', GeodesyController::class);
-Route::apiResource('clients', ClientController::class);
-Route::apiResource('general-designers', GeneralDesignerController::class);
-Route::apiResource('designers', DesignerController::class);
 
+Route::apiResource('geodesies', GeodesyController::class);
+Route::get('/geodesies/{geodesy}/projects', [GeodesyController::class, 'getProjects']);
+
+Route::apiResource('clients', ClientController::class);
+Route::get('/clients/{client}/projects', [ClientController::class, 'getProjects']);
+
+Route::apiResource('general-designers', GeneralDesignerController::class);
+Route::get('/general-designers/{generalDesigner}/projects', [GeneralDesignerController::class, 'getProjects']);
+
+
+Route::apiResource('designers', DesignerController::class);
+Route::get('/designers/{designer}/projects', [DesignerController::class, 'getProjects']);

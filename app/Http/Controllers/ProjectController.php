@@ -15,12 +15,18 @@ use Illuminate\Validation\ValidationException;
 
 class ProjectController extends Controller
 {
+    /**
+    * Display a listing of the resource.
+    */
     public function index()
     {
         $projects = Project::with(['client', 'geodesy', 'designer', 'generalDesigner'])->get();
         return ProjectResource::collection($projects);
     }
 
+    /**
+     * Gets a simplified list of projects for map view.
+     */
     public function mapView()
     {
         $projects = Project::with('polygons:id')->get();
@@ -33,12 +39,18 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+    * Gets all the polygons related to a project.
+    */
     public function polygons(Project $project)
     {
         $polygons = $project->polygons()->with('coords')->get();
         return PolygonResource::collection($polygons);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -68,7 +80,7 @@ class ProjectController extends Controller
             'min_role_level' => 'required|integer|between:-128,127',
         ]);
 
-return DB::transaction(function () use ($validated, $request) {
+        return DB::transaction(function () use ($validated, $request) {
             $validated['client_id'] = $this->resolveEntityId(Client::class, $request->client_id, 'client_id');
             $validated['general_designer_id'] = $this->resolveEntityId(GeneralDesigner::class, $request->general_designer_id, 'general_designer_id');
             $validated['designer_id'] = $this->resolveEntityId(Designer::class, $request->designer_id, 'designer_id');
@@ -80,11 +92,17 @@ return DB::transaction(function () use ($validated, $request) {
         });
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(Project $project)
     {
         return new ProjectResource($project->load(['client', 'geodesy', 'designer', 'generalDesigner']));
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, Project $project)
     {
         $validated = $request->validate([
@@ -132,6 +150,9 @@ return DB::transaction(function () use ($validated, $request) {
         });
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(Project $project)
     {
         $project->delete();
