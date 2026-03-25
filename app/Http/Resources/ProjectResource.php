@@ -20,10 +20,10 @@ class ProjectResource extends JsonResource
             'work_number' => $this->work_number,
             'folder_number' => $this->folder_number,
 
-            'designer' => $this->relationLoaded('designer') ? $this->designer->name : null,
-            'general_designer' => $this->relationLoaded('generalDesigner') ? $this->generalDesigner->name : null,
-            'client' => $this->relationLoaded('client') ? $this->client->name : null,
-            'geodesy' => $this->relationLoaded('geodesy') ? $this->geodesy->name : null,
+            'designer' => $this->relationLoaded('designer') ? $this->designer?->name : null,
+            'general_designer' => $this->relationLoaded('generalDesigner') ? $this->generalDesigner?->name : null,
+            'client' => $this->relationLoaded('client') ? $this->client?->name : null,
+            'geodesy' => $this->relationLoaded('geodesy') ? $this->geodesy?->name : null,
 
             'plan_issue_date' => $this->plan_issue_date?->format('Y-m-d'),
             'eutility_statement_issue_date' => $this->eutility_statement_issue_date?->format('Y-m-d'),

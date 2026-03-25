@@ -91,7 +91,7 @@ return [
      */
     'servers' => [
         'Production' => 'https://kulonutapi.jcloud.jedlik.cloud/api',
-        'Local' => 'http://localhost:8000/api',
+        'Local' => 'http://127.0.0.1:8000/api',
     ],
 
     /**
