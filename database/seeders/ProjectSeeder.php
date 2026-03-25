@@ -38,7 +38,7 @@ class ProjectSeeder extends Seeder
                 'geodesy_id' => empty($geodesyIds) || random_int(0, 5) === 0 ? null : $geodesyIds[array_rand($geodesyIds)],
 
                 'plan_issue_date' => now()->subDays($index),
-                'eutility_statement_issue_date' => now()->subDays($index + 3),
+                'utility_statement_issue_date' => now()->subDays($index + 3),
                 'road_construction_permit_date' => now()->subDays($index + 5),
                 'water_rights_permit_date' => now()->subDays($index + 7),
 
