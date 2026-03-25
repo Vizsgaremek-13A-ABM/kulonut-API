@@ -11,6 +11,7 @@ use App\Models\Designer;
 use App\Models\Geodesy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ProjectController extends Controller
 {
@@ -45,10 +46,10 @@ class ProjectController extends Controller
             'work_number' => 'nullable|string|max:100',
             'plan_issue_date' => 'nullable|date',
 
-            'client_id' => 'required',
-            'general_designer_id' => 'required',
-            'designer_id' => 'nullable',
-            'geodesy_id' => 'nullable',
+            'client_id' => 'required|max:255',
+            'general_designer_id' => 'required|max:255',
+            'designer_id' => 'nullable|max:255',
+            'geodesy_id' => 'nullable|max:255',
 
             'road_construction_plan' => 'nullable|boolean',
             'water_network_plan' => 'nullable|boolean',
@@ -67,16 +68,15 @@ class ProjectController extends Controller
             'min_role_level' => 'required|integer|between:-128,127',
         ]);
 
-        return DB::transaction(function () use ($validated, $request) {
-            $validated['client_id'] = $this->resolveEntityId(Client::class, $request->client_id);
-            $validated['general_designer_id'] = $this->resolveEntityId(GeneralDesigner::class, $request->general_designer_id);
-            $validated['designer_id'] = $this->resolveEntityId(Designer::class, $request->designer_id);
-            $validated['geodesy_id'] = $this->resolveEntityId(Geodesy::class, $request->geodesy_id);
+return DB::transaction(function () use ($validated, $request) {
+            $validated['client_id'] = $this->resolveEntityId(Client::class, $request->client_id, 'client_id');
+            $validated['general_designer_id'] = $this->resolveEntityId(GeneralDesigner::class, $request->general_designer_id, 'general_designer_id');
+            $validated['designer_id'] = $this->resolveEntityId(Designer::class, $request->designer_id, 'designer_id');
+            $validated['geodesy_id'] = $this->resolveEntityId(Geodesy::class, $request->geodesy_id, 'geodesy_id');
 
             $project = Project::create($validated);
-            $project->load(['client', 'geodesy', 'designer', 'generalDesigner', 'polygons']);
-
-            return (new ProjectResource($project))->response()->setStatusCode(201);
+            return (new ProjectResource($project->load(['client', 'geodesy', 'designer', 'generalDesigner'])))
+                ->response()->setStatusCode(201);
         });
     }
 
@@ -92,10 +92,10 @@ class ProjectController extends Controller
             'work_number' => 'sometimes|nullable|string|max:100',
             'plan_issue_date' => 'sometimes|nullable|date',
 
-            'client_id' => 'sometimes|required',
-            'general_designer_id' => 'sometimes|required',
-            'designer_id' => 'sometimes|nullable',
-            'geodesy_id' => 'sometimes|nullable',
+            'client_id' => 'sometimes|required|max:255',
+            'general_designer_id' => 'sometimes|required|max:255',
+            'designer_id' => 'sometimes|nullable|max:255',
+            'geodesy_id' => 'sometimes|nullable|max:255',
 
             'road_construction_plan' => 'sometimes|nullable|boolean',
             'water_network_plan' => 'sometimes|nullable|boolean',
@@ -114,23 +114,21 @@ class ProjectController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated, $request, $project) {
-            if ($request->has('client_id')) {
-                $validated['client_id'] = $this->resolveEntityId(Client::class, $request->client_id);
+            if (array_key_exists('client_id', $validated)) {
+                $validated['client_id'] = $this->resolveEntityId(Client::class, $request->client_id, 'client_id');
             }
-            if ($request->has('general_designer_id')) {
-                $validated['general_designer_id'] = $this->resolveEntityId(GeneralDesigner::class, $request->general_designer_id);
+            if (array_key_exists('general_designer_id', $validated)) {
+                $validated['general_designer_id'] = $this->resolveEntityId(GeneralDesigner::class, $request->general_designer_id, 'general_designer_id');
             }
-            if ($request->has('designer_id')) {
-                $validated['designer_id'] = $this->resolveEntityId(Designer::class, $request->designer_id);
+            if (array_key_exists('designer_id', $validated)) {
+                $validated['designer_id'] = $this->resolveEntityId(Designer::class, $request->designer_id, 'designer_id');
             }
-            if ($request->has('geodesy_id')) {
-                $validated['geodesy_id'] = $this->resolveEntityId(Geodesy::class, $request->geodesy_id);
+            if (array_key_exists('geodesy_id', $validated)) {
+                $validated['geodesy_id'] = $this->resolveEntityId(Geodesy::class, $request->geodesy_id, 'geodesy_id');
             }
 
             $project->update($validated);
-            $project->load(['client', 'geodesy', 'designer', 'generalDesigner']);
-
-            return new ProjectResource($project);
+            return new ProjectResource($project->load(['client', 'geodesy', 'designer', 'generalDesigner']));
         });
     }
 
@@ -140,13 +138,19 @@ class ProjectController extends Controller
         return response()->noContent();
     }
 
-    private function resolveEntityId($modelClass, $value)
+    private function resolveEntityId($modelClass, $value, $fieldName)
     {
         if (empty($value)) return null;
 
         if (is_numeric($value)) {
+            if (!$modelClass::where('id', $value)->exists()) {
+                throw ValidationException::withMessages([
+                    $fieldName => ["The selected {$fieldName} is invalid."]
+                ]);
+            }
             return $value;
         }
+
 
         $record = $modelClass::firstOrCreate(['name' => $value]);
         return $record->id;
