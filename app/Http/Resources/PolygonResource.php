@@ -17,7 +17,7 @@ class PolygonResource extends JsonResource
         return [
             'polygon_id' => $this->id,
             'polygon_name' => $this->name,
-            'projects' => $this->whenLoaded('projects', function () use ($request) {
+            'projects' => $this->whenLoaded('projects', function () {
                 return $this->projects->map(function ($project) {
                     return [
                         'project_id' => $project->id,

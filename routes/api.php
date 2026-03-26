@@ -28,7 +28,6 @@ Route::controller(ProjectController::class)->group(function () {
 
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('polygons', PolygonController::class);
-Route::get('/polygons/{polygon}/projects', [PolygonController::class, 'getProjects']);
 
 Route::apiResource('coords', CoordController::class);
 Route::apiResource('roles', RoleController::class);
