@@ -15,8 +15,8 @@ class CoordResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'lat' => $this->latitude,
-            'lng' => $this->longitude,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
         ];
     }
 }
