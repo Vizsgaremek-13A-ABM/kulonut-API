@@ -16,12 +16,12 @@ class PolygonResource extends JsonResource
     {
         return [
             'polygon_id' => $this->id,
-            'name'       => $this->name,
+            'polygon_name' => $this->name,
             'projects' => $this->whenLoaded('projects', function () use ($request) {
                 return $this->projects->map(function ($project) {
                     return [
-                        'project_id'      => $project->id,
-                        'name'            => $project->project_name,
+                        'project_id' => $project->id,
+                        'name' => $project->project_name,
                         'plan_issue_date' => $project->plan_issue_date?->format('Y-m-d'),
                     ];
                 });
