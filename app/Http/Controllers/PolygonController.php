@@ -36,6 +36,7 @@ class PolygonController extends Controller
      */
     public function show(Polygon $polygon)
     {
+        $polygon = Polygon::with(['coords', 'projects'])->findOrFail($polygon->id);
         return new PolygonResource($polygon);
     }
 
