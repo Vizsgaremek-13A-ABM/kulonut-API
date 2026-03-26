@@ -16,8 +16,16 @@ class PolygonResource extends JsonResource
     {
         return [
             'polygon_id' => $this->id,
-            'project_ids' => $this->projects->pluck('id'),
-            'name' => $this->name,
+            'name'       => $this->name,
+            'projects' => $this->whenLoaded('projects', function () use ($request) {
+                return $this->projects->map(function ($project) {
+                    return [
+                        'project_id'      => $project->id,
+                        'name'            => $project->project_name,
+                        'plan_issue_date' => $project->plan_issue_date?->format('Y-m-d'),
+                    ];
+                });
+            }),
             'coordinates' => CoordResource::collection($this->whenLoaded('coords')),
         ];
     }
