@@ -13,7 +13,7 @@ class PolygonController extends Controller
      */
     public function index()
     {
-        $polygons = Polygon::with('coords')->get();
+        $polygons = Polygon::with(['coords', 'projects'])->get();
         return PolygonResource::collection($polygons);
     }
 
