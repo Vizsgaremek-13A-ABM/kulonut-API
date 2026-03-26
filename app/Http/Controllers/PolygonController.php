@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PolygonResource;
 use App\Models\Polygon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PolygonController extends Controller
 {
@@ -13,7 +14,7 @@ class PolygonController extends Controller
      */
     public function index()
     {
-        $polygons = Polygon::with('coords')->get();
+        $polygons = Polygon::with(['coords', 'projects'])->get();
         return PolygonResource::collection($polygons);
     }
 
@@ -23,12 +24,24 @@ class PolygonController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:50',
+            'project_id'   => 'required|exists:projects,id',
+            'polygon_name' => 'required|string|max:50',
+            'coordinates'  => 'required|array',
+            'coordinates.*.latitude'  => 'required|numeric|between:-90,90',
+            'coordinates.*.longitude' => 'required|numeric|between:-180,180',
         ]);
 
-        $polygon = Polygon::create($validated);
+        return DB::transaction(function () use ($validated) {
+            $polygon = Polygon::create([
+                'name' => $validated['polygon_name']
+            ]);
 
-        return (new PolygonResource($polygon))->response()->setStatusCode(201);
+            $polygon->projects()->attach($validated['project_id']);
+
+            $polygon->coords()->createMany($validated['coordinates']);
+
+            return (new PolygonResource($polygon->load(['coords', 'projects'])))->response()->setStatusCode(201);
+        });
     }
 
     /**
@@ -36,6 +49,7 @@ class PolygonController extends Controller
      */
     public function show(Polygon $polygon)
     {
+        $polygon->load(['coords', 'projects']);
         return new PolygonResource($polygon);
     }
 
@@ -45,12 +59,29 @@ class PolygonController extends Controller
     public function update(Request $request, Polygon $polygon)
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:50',
+            'project_id'   => 'sometimes|required|exists:projects,id',
+            'polygon_name' => 'sometimes|required|string|max:50',
+            'coordinates'  => 'sometimes|required|array',
+            'coordinates.*.latitude'  => 'sometimes|required|numeric|between:-90,90',
+            'coordinates.*.longitude' => 'sometimes|required|numeric|between:-180,180',
         ]);
 
-        $polygon->update($validated);
+        return DB::transaction(function () use ($validated, $polygon) {
+            if (isset($validated['polygon_name'])) {
+                $polygon->update(['name' => $validated['polygon_name']]);
+            }
 
-        return new PolygonResource($polygon);
+            if (isset($validated['project_id'])) {
+                $polygon->projects()->sync([$validated['project_id']]);
+            }
+
+            if (isset($validated['coordinates'])) {
+                $polygon->coords()->delete();
+                $polygon->coords()->createMany($validated['coordinates']);
+            }
+
+            return new PolygonResource($polygon->load(['coords', 'projects']));
+        });
     }
 
     /**
