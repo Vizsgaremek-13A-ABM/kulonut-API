@@ -87,8 +87,9 @@ class ProjectController extends Controller
             $validated['geodesy_id'] = $this->resolveEntityId(Geodesy::class, $request->geodesy_id, 'geodesy_id');
 
             $project = Project::create($validated);
-            return (new ProjectResource($project->load(['client', 'geodesy', 'designer', 'generalDesigner'])))
-                ->response()->setStatusCode(201);
+            return response()->json([
+                'id' => $project->id,
+            ], 201);
         });
     }
 
