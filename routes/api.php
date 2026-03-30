@@ -26,6 +26,12 @@ Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects/{project}/polygons', 'polygons');
 });
 
+Route::controller(PolygonController::class)->group(function () {
+    Route::post('/polygons/bulk', 'bulkStore');
+    Route::put('/polygons/bulk', 'bulkUpdate');
+    Route::delete('/polygons/bulk', 'bulkDestroy');
+});
+
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('polygons', PolygonController::class);
 

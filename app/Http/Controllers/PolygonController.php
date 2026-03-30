@@ -40,7 +40,41 @@ class PolygonController extends Controller
 
             $polygon->coords()->createMany($validated['coordinates']);
 
-            return (new PolygonResource($polygon->load(['coords', 'projects'])))->response()->setStatusCode(201);
+            return response()->json([
+                'id' => $polygon->id,
+            ], 201);
+        });
+    }
+
+    /**
+     * Bulk store newly created polygons.
+     */
+    public function bulkStore(Request $request)
+    {
+        $validated = $request->validate([
+            'polygons' => 'required|array|min:1',
+            'polygons.*.project_id' => 'required|exists:projects,id',
+            'polygons.*.polygon_name' => 'required|string|max:50',
+            'polygons.*.coordinates' => 'required|array|min:1',
+            'polygons.*.coordinates.*.latitude' => 'required|numeric|between:-90,90',
+            'polygons.*.coordinates.*.longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        return DB::transaction(function () use ($validated) {
+            $createdPolygons = collect($validated['polygons'])->map(function ($polygonData) {
+                $polygon = Polygon::create([
+                    'name' => $polygonData['polygon_name'],
+                ]);
+
+                $polygon->projects()->attach($polygonData['project_id']);
+                $polygon->coords()->createMany($polygonData['coordinates']);
+
+                return $polygon->load(['coords', 'projects']);
+            });
+
+            return PolygonResource::collection($createdPolygons)
+                ->response()
+                ->setStatusCode(201);
         });
     }
 
@@ -85,11 +119,75 @@ class PolygonController extends Controller
     }
 
     /**
+     * Bulk update polygons.
+     */
+    public function bulkUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'polygons' => 'required|array|min:1',
+            'polygons.*.polygon_id' => 'required|exists:polygons,id',
+            'polygons.*.project_id' => 'sometimes|required|exists:projects,id',
+            'polygons.*.polygon_name' => 'sometimes|required|string|max:50',
+            'polygons.*.coordinates' => 'sometimes|required|array|min:1',
+            'polygons.*.coordinates.*.latitude' => 'sometimes|required|numeric|between:-90,90',
+            'polygons.*.coordinates.*.longitude' => 'sometimes|required|numeric|between:-180,180',
+        ]);
+
+        return DB::transaction(function () use ($validated) {
+            $polygonIds = collect($validated['polygons'])->pluck('polygon_id')->all();
+            $polygonsById = Polygon::whereIn('id', $polygonIds)->get()->keyBy('id');
+
+            $updatedPolygons = collect($validated['polygons'])->map(function ($polygonData) use ($polygonsById) {
+                $polygon = $polygonsById->get($polygonData['polygon_id']);
+
+                if (!$polygon) {
+                    abort(404);
+                }
+                if (array_key_exists('polygon_name', $polygonData)) {
+                    $polygon->update(['name' => $polygonData['polygon_name']]);
+                }
+
+                if (array_key_exists('project_id', $polygonData)) {
+                    $polygon->projects()->sync([$polygonData['project_id']]);
+                }
+
+                if (array_key_exists('coordinates', $polygonData)) {
+                    $polygon->coords()->delete();
+                    $polygon->coords()->createMany($polygonData['coordinates']);
+                }
+
+                return $polygon->load(['coords', 'projects']);
+            });
+
+            return PolygonResource::collection($updatedPolygons);
+        });
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Polygon $polygon)
     {
         $polygon->delete();
         return response()->noContent();
+    }
+
+    /**
+     * Bulk delete polygons.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'polygon_ids' => 'required|array|min:1',
+            'polygon_ids.*' => 'required|exists:polygons,id',
+        ]);
+
+        return DB::transaction(function () use ($validated) {
+            $deletedCount = Polygon::whereIn('id', $validated['polygon_ids'])->delete();
+
+            return response()->json([
+                'deleted_count' => $deletedCount,
+            ]);
+        });
     }
 }

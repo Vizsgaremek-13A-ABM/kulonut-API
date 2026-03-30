@@ -28,7 +28,9 @@ class CoordController extends Controller
         ]);
         $coord = Coord::create($validated);
 
-        return (new CoordResource($coord))->response()->setStatusCode(201);
+        return response()->json([
+            'id' => $coord->id,
+        ], 201);
     }
 
     /**

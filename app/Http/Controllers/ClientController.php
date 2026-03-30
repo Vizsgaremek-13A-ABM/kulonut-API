@@ -38,7 +38,9 @@ class ClientController extends Controller
 
         $client = Client::create($validated);
 
-        return (new ClientResource($client))->response()->setStatusCode(201);
+        return response()->json([
+            'id' => $client->id,
+        ], 201);
     }
 
     /**

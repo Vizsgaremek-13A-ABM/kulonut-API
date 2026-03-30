@@ -38,7 +38,9 @@ class GeodesyController extends Controller
 
         $geodesy = Geodesy::create($validated);
 
-        return (new GeodesyResource($geodesy))->response()->setStatusCode(201);
+        return response()->json([
+            'id' => $geodesy->id,
+        ], 201);
     }
 
     /**

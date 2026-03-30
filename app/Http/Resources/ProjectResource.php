@@ -26,7 +26,7 @@ class ProjectResource extends JsonResource
             'geodesy' => $this->relationLoaded('geodesy') ? $this->geodesy?->name : null,
 
             'plan_issue_date' => $this->plan_issue_date?->format('Y-m-d'),
-            'eutility_statement_issue_date' => $this->eutility_statement_issue_date?->format('Y-m-d'),
+            'utility_statement_issue_date' => $this->utility_statement_issue_date?->format('Y-m-d'),
             'road_construction_permit_date' => $this->road_construction_permit_date?->format('Y-m-d'),
             'water_rights_permit_date' => $this->water_rights_permit_date?->format('Y-m-d'),
 

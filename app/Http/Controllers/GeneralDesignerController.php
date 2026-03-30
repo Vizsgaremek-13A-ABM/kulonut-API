@@ -38,7 +38,9 @@ class GeneralDesignerController extends Controller
 
         $generalDesigner = GeneralDesigner::create($validated);
 
-        return (new GeneralDesignerResource($generalDesigner))->response()->setStatusCode(201);
+        return response()->json([
+            'id' => $generalDesigner->id,
+        ], 201);
     }
 
     /**
