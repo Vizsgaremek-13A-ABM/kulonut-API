@@ -29,7 +29,9 @@ class RoleController extends Controller
 
         $role = Role::create($validated);
 
-        return (new RoleResource($role))->response()->setStatusCode(201);
+        return response()->json([
+            'id' => $role->id,
+        ], 201);
     }
 
     /**

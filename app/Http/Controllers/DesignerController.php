@@ -28,7 +28,9 @@ class DesignerController extends Controller
 
         $designer = Designer::create($validated);
 
-        return (new DesignerResource($designer))->response()->setStatusCode(201);
+        return response()->json([
+            'id' => $designer->id,
+        ], 201);
     }
 
     /**

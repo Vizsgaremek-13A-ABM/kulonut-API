@@ -40,7 +40,9 @@ class PolygonController extends Controller
 
             $polygon->coords()->createMany($validated['coordinates']);
 
-            return (new PolygonResource($polygon->load(['coords', 'projects'])))->response()->setStatusCode(201);
+            return response()->json([
+                'id' => $polygon->id,
+            ], 201);
         });
     }
 
@@ -138,7 +140,6 @@ class PolygonController extends Controller
             $updatedPolygons = collect($validated['polygons'])->map(function ($polygonData) use ($polygonsById) {
                 $polygon = $polygonsById->get($polygonData['polygon_id']);
 
-                // Preserve fail-fast behaviour similar to findOrFail in case of race conditions.
                 if (!$polygon) {
                     abort(404);
                 }
