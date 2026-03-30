@@ -132,9 +132,16 @@ class PolygonController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated) {
-            $updatedPolygons = collect($validated['polygons'])->map(function ($polygonData) {
-                $polygon = Polygon::findOrFail($polygonData['polygon_id']);
+            $polygonIds = collect($validated['polygons'])->pluck('polygon_id')->all();
+            $polygonsById = Polygon::whereIn('id', $polygonIds)->get()->keyBy('id');
 
+            $updatedPolygons = collect($validated['polygons'])->map(function ($polygonData) use ($polygonsById) {
+                $polygon = $polygonsById->get($polygonData['polygon_id']);
+
+                // Preserve fail-fast behaviour similar to findOrFail in case of race conditions.
+                if (!$polygon) {
+                    abort(404);
+                }
                 if (array_key_exists('polygon_name', $polygonData)) {
                     $polygon->update(['name' => $polygonData['polygon_name']]);
                 }
