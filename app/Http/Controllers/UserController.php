@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::all());
+        return UserResource::collection(User::with('role')->get());
     }
 
     /**
@@ -23,7 +23,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new UserResource($user);
+        return new UserResource($user->load('role'));
     }
 
     /**
@@ -42,7 +42,7 @@ class UserController extends Controller
 
         $user = User::create($validated);
 
-        return (new UserResource($user))->response()->setStatusCode(201);
+        return (new UserResource($user->load('role')))->response()->setStatusCode(201);
     }
 
     /**
@@ -59,7 +59,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return new UserResource($user);
+        return new UserResource($user->load('role'));
     }
 
     /**
@@ -81,7 +81,7 @@ class UserController extends Controller
             'profile_icon' => $path,
         ]);
 
-        return new UserResource($user->fresh());
+        return new UserResource($user->fresh()->load('role'));
     }
 
     /**
