@@ -47,7 +47,7 @@ class DesignerController extends Controller
     public function update(Request $request, Designer $designer)
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:50',
+            'name' => 'sometimes|string|max:50',
         ]);
 
         $designer->update($validated);

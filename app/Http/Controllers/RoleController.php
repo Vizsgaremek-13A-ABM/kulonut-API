@@ -48,9 +48,9 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $validated = $request->validate([
-            'role_name' => 'sometimes|required|string|max:50',
-            'description' => 'sometimes|required|string',
-            'level' => 'sometimes|required|integer',
+            'role_name' => 'sometimes|string|max:50',
+            'description' => 'sometimes|string',
+            'level' => 'sometimes|integer',
         ]);
 
         $role->update($validated);
