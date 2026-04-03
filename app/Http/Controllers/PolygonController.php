@@ -93,11 +93,11 @@ class PolygonController extends Controller
     public function update(Request $request, Polygon $polygon)
     {
         $validated = $request->validate([
-            'project_id'   => 'sometimes|required|exists:projects,id',
-            'polygon_name' => 'sometimes|required|string|max:50',
-            'coordinates'  => 'sometimes|required|array',
-            'coordinates.*.latitude'  => 'sometimes|required|numeric|between:-90,90',
-            'coordinates.*.longitude' => 'sometimes|required|numeric|between:-180,180',
+            'project_id'   => 'sometimes|exists:projects,id',
+            'polygon_name' => 'sometimes|string|max:50',
+            'coordinates'  => 'sometimes|array',
+            'coordinates.*.latitude'  => 'sometimes|numeric|between:-90,90',
+            'coordinates.*.longitude' => 'sometimes|numeric|between:-180,180',
         ]);
 
         return DB::transaction(function () use ($validated, $polygon) {
@@ -126,11 +126,11 @@ class PolygonController extends Controller
         $validated = $request->validate([
             'polygons' => 'required|array|min:1',
             'polygons.*.polygon_id' => 'required|exists:polygons,id',
-            'polygons.*.project_id' => 'sometimes|required|exists:projects,id',
-            'polygons.*.polygon_name' => 'sometimes|required|string|max:50',
-            'polygons.*.coordinates' => 'sometimes|required|array|min:1',
-            'polygons.*.coordinates.*.latitude' => 'sometimes|required|numeric|between:-90,90',
-            'polygons.*.coordinates.*.longitude' => 'sometimes|required|numeric|between:-180,180',
+            'polygons.*.project_id' => 'sometimes|exists:projects,id',
+            'polygons.*.polygon_name' => 'sometimes|string|max:50',
+            'polygons.*.coordinates' => 'sometimes|array|min:1',
+            'polygons.*.coordinates.*.latitude' => 'sometimes|numeric|between:-90,90',
+            'polygons.*.coordinates.*.longitude' => 'sometimes|numeric|between:-180,180',
         ]);
 
         return DB::transaction(function () use ($validated) {

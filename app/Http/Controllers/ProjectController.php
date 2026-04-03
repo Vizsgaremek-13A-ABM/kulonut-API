@@ -107,12 +107,12 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $validated = $request->validate([
-            'project_name' => 'sometimes|required|string|max:255',
+            'project_name' => 'sometimes|string|max:255',
             'work_number' => 'sometimes|nullable|string|max:100',
             'plan_issue_date' => 'sometimes|nullable|date',
 
-            'client_id' => 'sometimes|required|max:255',
-            'general_designer_id' => 'sometimes|required|max:255',
+            'client_id' => 'sometimes|max:255',
+            'general_designer_id' => 'sometimes|max:255',
             'designer_id' => 'sometimes|nullable|max:255',
             'geodesy_id' => 'sometimes|nullable|max:255',
 
@@ -129,7 +129,7 @@ class ProjectController extends Controller
             'other_work_parts' => 'sometimes|nullable|string',
             'folder_number' => 'sometimes|nullable|string|max:100',
 
-            'min_role_level' => 'sometimes|required|integer|between:-128,127',
+            'min_role_level' => 'sometimes|integer|between:-128,127',
         ]);
 
         return DB::transaction(function () use ($validated, $request, $project) {

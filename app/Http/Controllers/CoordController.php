@@ -47,9 +47,9 @@ class CoordController extends Controller
     public function update(Request $request, Coord $coord)
     {
         $validated = $request->validate([
-            'polygon_id' => 'sometimes|required|exists:polygons,id',
-            'latitude' => 'sometimes|required|numeric|between:-90,90',
-            'longitude' => 'sometimes|required|numeric|between:-180,180',
+            'polygon_id' => 'sometimes|exists:polygons,id',
+            'latitude' => 'sometimes|numeric|between:-90,90',
+            'longitude' => 'sometimes|numeric|between:-180,180',
         ]);
 
         $coord->update($validated);

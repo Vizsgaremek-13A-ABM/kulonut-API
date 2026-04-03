@@ -57,7 +57,7 @@ class GeneralDesignerController extends Controller
     public function update(Request $request, GeneralDesigner $generalDesigner)
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:50',
+            'name' => 'sometimes|string|max:50',
         ]);
 
         $generalDesigner->update($validated);

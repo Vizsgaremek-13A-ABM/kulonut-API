@@ -57,7 +57,7 @@ class ClientController extends Controller
     public function update(Request $request, Client $client)
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:100',
+            'name' => 'sometimes|string|max:100',
         ]);
 
         $client->update($validated);
