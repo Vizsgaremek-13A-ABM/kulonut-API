@@ -36,6 +36,7 @@ Route::controller(PolygonController::class)->group(function () {
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('polygons', PolygonController::class);
 Route::apiResource('users', UserController::class);
+Route::post('/users/{user}/profile-icon', [UserController::class, 'uploadProfileIcon']);
 
 Route::apiResource('coords', CoordController::class);
 Route::apiResource('roles', RoleController::class);
