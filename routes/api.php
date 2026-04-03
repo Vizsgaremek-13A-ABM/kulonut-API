@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CoordController;
 use App\Http\Controllers\DesignerController;
 use App\Http\Controllers\GeneralDesignerController;
 use App\Http\Controllers\GeodesyController;
-use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PolygonController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('throttle:5,1')->controller(AuthController::class)->group(function () {
@@ -34,6 +35,7 @@ Route::controller(PolygonController::class)->group(function () {
 
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('polygons', PolygonController::class);
+Route::apiResource('users', UserController::class);
 
 Route::apiResource('coords', CoordController::class);
 Route::apiResource('roles', RoleController::class);
