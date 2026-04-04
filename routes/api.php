@@ -19,7 +19,8 @@ Route::middleware('throttle:5,1')->controller(AuthController::class)->group(func
 
 Route::middleware('auth:sanctum')->controller(AuthController::class)->group(function () {
     Route::post('/auth/logout', 'logout');
-    Route::get('/user', 'me');
+    Route::get('/auth/user', 'me');
+    Route::post('/auth/update-password', 'updatePassword');
 });
 
 Route::controller(ProjectController::class)->group(function () {
