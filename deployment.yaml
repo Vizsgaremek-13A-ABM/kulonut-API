@@ -7,28 +7,17 @@ data:
   APP_ENV: "production"
   APP_DEBUG: "false"
   APP_URL: "https://kulonutapi.jcloud.jedlik.cloud"
+
   DB_CONNECTION: "mysql"
   DB_HOST: "jcloud02.jedlik.eu"
   DB_PORT: "3306"
   DB_DATABASE: "kiss_martin2_db_2"
+
   SESSION_DRIVER: "database"
   SESSION_LIFETIME: "120"
   SESSION_ENCRYPT: "false"
   SESSION_PATH: "/"
   SESSION_DOMAIN: "null"
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: kulonut-api-public-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-  storageClassName: local-path
 
 ---
 apiVersion: apps/v1
@@ -60,12 +49,12 @@ spec:
             - secretRef:
                 name: kulonut-api-secret
           volumeMounts:
-            - name: public-storage-volume
+            - name: kulonut-storage
               mountPath: /var/www/html/storage/app/public
       volumes:
-        - name: public-storage-volume
+        - name: storage-volume
           persistentVolumeClaim:
-            claimName: kulonut-api-public-pvc
+            claimName: kulonut-storage
 
 ---
 apiVersion: v1
