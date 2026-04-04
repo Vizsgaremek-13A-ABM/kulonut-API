@@ -58,6 +58,23 @@ spec:
 
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kulonut-storage
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+  selector:
+    matchLabels:
+      student: kiss-martin2
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: kulonut-api-svc
