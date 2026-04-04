@@ -20,19 +20,6 @@ data:
   SESSION_DOMAIN: "null"
 
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: kulonut-api-storage-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-  storageClassName: local-path
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -56,18 +43,35 @@ spec:
           ports:
             - name: http
               containerPort: 8000
-          volumeMounts:
-            - name: storage-volume
-              mountPath: /var/www/html/storage
           envFrom:
             - configMapRef:
                 name: kulonut-api-config
             - secretRef:
                 name: kulonut-api-secret
+          volumeMounts:
+            - name: kulonut-storage
+              mountPath: /var/www/html/storage/app/public
       volumes:
-        - name: storage-volume
+        - name: kulonut-storage
           persistentVolumeClaim:
-            claimName: kulonut-api-storage-pvc
+            claimName: kulonut-storage
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kulonut-storage
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+  selector:
+    matchLabels:
+      student: kiss-martin2
 
 ---
 apiVersion: v1

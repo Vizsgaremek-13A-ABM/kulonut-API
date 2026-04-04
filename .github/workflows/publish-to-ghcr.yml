@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - kube
-      - 24-create-a-working-cors-policy
+      - 51-fix-docker-and-also-put-in-valid-roles
   workflow_dispatch:
 
 jobs:
