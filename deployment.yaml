@@ -52,7 +52,7 @@ spec:
             - name: kulonut-storage
               mountPath: /var/www/html/storage/app/public
       volumes:
-        - name: storage-volume
+        - name: kulonut-storage
           persistentVolumeClaim:
             claimName: kulonut-storage
 
