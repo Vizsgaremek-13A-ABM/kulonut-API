@@ -45,8 +45,6 @@ class UserController extends Controller
             'role_id' => 'sometimes|nullable|exists:roles,id',
         ]);
 
-        $validated['password'] = bcrypt($validated['password']);
-
         $user = User::create($validated);
 
         return (new UserResource($user->load('role')))->response()->setStatusCode(201);
