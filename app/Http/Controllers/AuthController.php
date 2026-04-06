@@ -22,8 +22,15 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\.]).{8,}$/|confirmed',
         ]);
 
-        $validated['role_id'] = Role::roleIdFor(Role::USER) ?? 1;
+        $defaultRoleId = Role::roleIdFor(Role::USER);
 
+        if ($defaultRoleId === null) {
+            throw ValidationException::withMessages([
+                'role' => ['Default user role is not configured.'],
+            ]);
+        }
+
+        $validated['role_id'] = $defaultRoleId;
         $user = User::create($validated);
 
         $token = $user->createToken('auth_token')->plainTextToken;
