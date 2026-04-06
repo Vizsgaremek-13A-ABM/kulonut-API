@@ -15,6 +15,8 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', User::class);
+
         return UserResource::collection(User::with('role')->get());
     }
 
@@ -23,6 +25,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorize('view', $user);
+
         return new UserResource($user->load('role'));
     }
 
@@ -31,14 +35,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', User::class);
+
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'display_name' => 'nullable|string|max:100',
             'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
             'role_id' => 'sometimes|nullable|exists:roles,id',
         ]);
 
-        $validated['password'] = Str::random(32);
+        $validated['password'] = bcrypt($validated['password']);
 
         $user = User::create($validated);
 
@@ -50,6 +57,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $this->authorize('update', $user);
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:100',
             'display_name' => 'sometimes|nullable|string|max:100',
@@ -67,6 +76,8 @@ class UserController extends Controller
      */
     public function uploadProfileIcon(Request $request, User $user)
     {
+        $this->authorize('uploadProfileIcon', $user);
+
         $validated = $request->validate([
             'profile_icon' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
@@ -89,6 +100,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $this->authorize('delete', $user);
+
         $user->delete();
         return response()->json(['message' => 'User deleted successfully.']);
     }

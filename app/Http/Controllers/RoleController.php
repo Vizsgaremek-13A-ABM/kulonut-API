@@ -13,6 +13,8 @@ class RoleController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Role::class);
+
         return RoleResource::collection(Role::all());
     }
 
@@ -21,10 +23,12 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Role::class);
+
         $validated = $request->validate([
             'role_name' => 'required|string|max:50',
             'description' => 'required|string',
-            'level' => 'required|integer',
+            'level' => 'required|integer|between:0,99',
         ]);
 
         $role = Role::create($validated);
@@ -39,6 +43,8 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
+        $this->authorize('view', $role);
+
         return new RoleResource($role);
     }
 
@@ -47,10 +53,12 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
+        $this->authorize('update', $role);
+
         $validated = $request->validate([
             'role_name' => 'sometimes|string|max:50',
             'description' => 'sometimes|string',
-            'level' => 'sometimes|integer',
+            'level' => 'sometimes|integer|between:0,99',
         ]);
 
         $role->update($validated);
@@ -63,6 +71,8 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        $this->authorize('delete', $role);
+
         $role->delete();
         return response()->noContent();
     }

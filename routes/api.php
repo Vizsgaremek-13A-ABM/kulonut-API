@@ -23,34 +23,57 @@ Route::middleware('auth:sanctum')->controller(AuthController::class)->group(func
     Route::post('/auth/update-password', 'updatePassword');
 });
 
-Route::controller(ProjectController::class)->group(function () {
-    Route::get('/projects/map', 'mapView');
-    Route::get('/projects/{project}/polygons', 'polygons');
+Route::middleware('auth.optional.sanctum')->group(function () {
+    Route::controller(ProjectController::class)->group(function () {
+        Route::get('/projects/{project}/polygons', 'polygons');
+    });
+
+    Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
 });
 
-Route::controller(PolygonController::class)->group(function () {
-    Route::post('/polygons/bulk', 'bulkStore');
-    Route::put('/polygons/bulk', 'bulkUpdate');
-    Route::delete('/polygons/bulk', 'bulkDestroy');
+Route::middleware(['auth:sanctum', 'role.level:10'])->group(function () {
+    Route::controller(ProjectController::class)->group(function () {
+        Route::get('/projects/map', 'mapView');
+    });
 });
 
-Route::apiResource('projects', ProjectController::class);
-Route::apiResource('polygons', PolygonController::class);
-Route::apiResource('users', UserController::class);
-Route::post('/users/{user}/profile-icon', [UserController::class, 'uploadProfileIcon']);
+Route::middleware(['auth:sanctum', 'role.level:10'])->group(function () {
+    Route::apiResource('geodesies', GeodesyController::class)->only(['index', 'show']);
+    Route::get('/geodesies/{geodesy}/projects', [GeodesyController::class, 'getProjects']);
 
-Route::apiResource('coords', CoordController::class);
-Route::apiResource('roles', RoleController::class);
+    Route::apiResource('clients', ClientController::class)->only(['index', 'show']);
+    Route::get('/clients/{client}/projects', [ClientController::class, 'getProjects']);
 
-Route::apiResource('geodesies', GeodesyController::class);
-Route::get('/geodesies/{geodesy}/projects', [GeodesyController::class, 'getProjects']);
+    Route::apiResource('general-designers', GeneralDesignerController::class)->only(['index', 'show']);
+    Route::get('/general-designers/{generalDesigner}/projects', [GeneralDesignerController::class, 'getProjects']);
 
-Route::apiResource('clients', ClientController::class);
-Route::get('/clients/{client}/projects', [ClientController::class, 'getProjects']);
+    Route::apiResource('designers', DesignerController::class)->only(['index', 'show']);
+    Route::get('/designers/{designer}/projects', [DesignerController::class, 'getProjects']);
 
-Route::apiResource('general-designers', GeneralDesignerController::class);
-Route::get('/general-designers/{generalDesigner}/projects', [GeneralDesignerController::class, 'getProjects']);
+    Route::apiResource('polygons', PolygonController::class)->only(['index', 'show']);
+    Route::apiResource('coords', CoordController::class)->only(['index', 'show']);
 
+    Route::post('/users/{user}/profile-icon', [UserController::class, 'uploadProfileIcon']);
+});
 
-Route::apiResource('designers', DesignerController::class);
-Route::get('/designers/{designer}/projects', [DesignerController::class, 'getProjects']);
+Route::middleware(['auth:sanctum', 'role.level:50'])->group(function () {
+    Route::controller(PolygonController::class)->group(function () {
+        Route::post('/polygons/bulk', 'bulkStore');
+        Route::put('/polygons/bulk', 'bulkUpdate');
+        Route::delete('/polygons/bulk', 'bulkDestroy');
+    });
+
+    Route::apiResource('projects', ProjectController::class)->except(['index', 'show']);
+    Route::apiResource('polygons', PolygonController::class)->except(['index', 'show']);
+    Route::apiResource('coords', CoordController::class)->except(['index', 'show']);
+
+    Route::apiResource('geodesies', GeodesyController::class)->except(['index', 'show']);
+    Route::apiResource('clients', ClientController::class)->except(['index', 'show']);
+    Route::apiResource('general-designers', GeneralDesignerController::class)->except(['index', 'show']);
+    Route::apiResource('designers', DesignerController::class)->except(['index', 'show']);
+});
+
+Route::middleware(['auth:sanctum', 'role.level:99'])->group(function () {
+    Route::apiResource('users', UserController::class);
+    Route::apiResource('roles', RoleController::class);
+});

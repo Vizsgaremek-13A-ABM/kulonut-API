@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\GeneralDesigner;
 use App\Models\Designer;
 use App\Models\Geodesy;
+use App\Support\Rbac;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -18,18 +19,24 @@ class ProjectController extends Controller
     /**
     * Display a listing of the resource.
     */
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::with(['client', 'geodesy', 'designer', 'generalDesigner'])->get();
+        $this->authorize('viewAny', Project::class);
+
+        $projects = Project::with(['client', 'geodesy', 'designer', 'generalDesigner'])
+            ->where('min_role_level', '<=', $this->currentRoleLevel($request))->get();
+
         return ProjectResource::collection($projects);
     }
 
     /**
      * Gets a simplified list of projects for map view.
      */
-    public function mapView()
+    public function mapView(Request $request)
     {
-        $projects = Project::with('polygons:id')->get();
+        $this->authorize('viewAny', Project::class);
+
+        $projects = Project::with('polygons:id')->where('min_role_level', '<=', $this->currentRoleLevel($request))->get();
 
         return $projects->map(fn($project) => [
             'project_id' => $project->id,
@@ -42,8 +49,10 @@ class ProjectController extends Controller
     /**
     * Gets all the polygons related to a project.
     */
-    public function polygons(Project $project)
+    public function polygons(Request $request, Project $project)
     {
+        $this->authorize('view', $project);
+
         $polygons = $project->polygons()->with('coords')->get();
         return PolygonResource::collection($polygons);
     }
@@ -53,6 +62,8 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Project::class);
+
         $validated = $request->validate([
             'project_name' => 'required|string|max:255',
             'work_number' => 'nullable|string|max:100',
@@ -77,7 +88,7 @@ class ProjectController extends Controller
             'other_work_parts' => 'nullable|string',
             'folder_number' => 'nullable|string|max:100',
 
-            'min_role_level' => 'required|integer|between:-128,127',
+            'min_role_level' => 'required|integer|between:0,99',
         ]);
 
         return DB::transaction(function () use ($validated, $request) {
@@ -98,6 +109,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        $this->authorize('view', $project);
+
         return new ProjectResource($project->load(['client', 'geodesy', 'designer', 'generalDesigner']));
     }
 
@@ -106,6 +119,8 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
+        $this->authorize('update', $project);
+
         $validated = $request->validate([
             'project_name' => 'sometimes|string|max:255',
             'work_number' => 'sometimes|nullable|string|max:100',
@@ -129,7 +144,7 @@ class ProjectController extends Controller
             'other_work_parts' => 'sometimes|nullable|string',
             'folder_number' => 'sometimes|nullable|string|max:100',
 
-            'min_role_level' => 'sometimes|integer|between:-128,127',
+            'min_role_level' => 'sometimes|integer|between:0,99',
         ]);
 
         return DB::transaction(function () use ($validated, $request, $project) {
@@ -156,8 +171,15 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        $this->authorize('delete', $project);
+
         $project->delete();
         return response()->noContent();
+    }
+
+    private function currentRoleLevel(Request $request): int
+    {
+        return Rbac::levelOf($request->user());
     }
 
     private function resolveEntityId($modelClass, $value, $fieldName)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\.]).{8,}$/|confirmed',
         ]);
+
+        $validated['role_id'] = Role::roleIdFor(Role::USER) ?? 1;
 
         $user = User::create($validated);
 
