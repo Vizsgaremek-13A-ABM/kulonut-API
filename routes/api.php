@@ -25,16 +25,11 @@ Route::middleware('auth:sanctum')->controller(AuthController::class)->group(func
 
 Route::middleware('auth.optional.sanctum')->group(function () {
     Route::controller(ProjectController::class)->group(function () {
+        Route::get('/projects/map', 'mapView');
         Route::get('/projects/{project}/polygons', 'polygons');
     });
 
     Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
-});
-
-Route::middleware(['auth:sanctum', 'role.level:10'])->group(function () {
-    Route::controller(ProjectController::class)->group(function () {
-        Route::get('/projects/map', 'mapView');
-    });
 });
 
 Route::middleware(['auth:sanctum', 'role.level:10'])->group(function () {
