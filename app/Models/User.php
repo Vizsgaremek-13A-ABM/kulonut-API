@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\Rbac;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -67,13 +68,13 @@ class User extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    public function hasRole(string $roleName): bool
+    public function roleLevel(): int
     {
-        return $this->role?->role_name === $roleName;
+        return Rbac::levelOf($this);
     }
 
-    public function hasLevel(int $level): bool
+    public function hasMinimumLevel(int $level): bool
     {
-        return $this->role?->level >= $level;
+        return $this->roleLevel() >= $level;
     }
 }

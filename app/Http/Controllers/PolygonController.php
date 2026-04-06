@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PolygonResource;
+use App\Models\Project;
 use App\Models\Polygon;
+use App\Support\Rbac;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +16,15 @@ class PolygonController extends Controller
      */
     public function index()
     {
-        $polygons = Polygon::with(['coords', 'projects'])->get();
+        $this->authorize('viewAny', Polygon::class);
+
+        $roleLevel = $this->currentRoleLevel(request());
+
+        $polygons = Polygon::with(['coords', 'projects'])
+            ->whereHas('projects', function ($query) use ($roleLevel) {
+                $query->where('min_role_level', '<=', $roleLevel);
+            })->get();
+
         return PolygonResource::collection($polygons);
     }
 
@@ -23,6 +33,8 @@ class PolygonController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Polygon::class);
+
         $validated = $request->validate([
             'project_id'   => 'required|exists:projects,id',
             'polygon_name' => 'required|string|max:50',
@@ -32,6 +44,9 @@ class PolygonController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated) {
+            $project = Project::query()->findOrFail($validated['project_id']);
+            $this->authorize('view', $project);
+
             $polygon = Polygon::create([
                 'name' => $validated['polygon_name']
             ]);
@@ -51,6 +66,8 @@ class PolygonController extends Controller
      */
     public function bulkStore(Request $request)
     {
+        $this->authorize('create', Polygon::class);
+
         $validated = $request->validate([
             'polygons' => 'required|array|min:1',
             'polygons.*.project_id' => 'required|exists:projects,id',
@@ -62,6 +79,9 @@ class PolygonController extends Controller
 
         return DB::transaction(function () use ($validated) {
             $createdPolygons = collect($validated['polygons'])->map(function ($polygonData) {
+                $project = Project::query()->findOrFail($polygonData['project_id']);
+                $this->authorize('view', $project);
+
                 $polygon = Polygon::create([
                     'name' => $polygonData['polygon_name'],
                 ]);
@@ -83,6 +103,8 @@ class PolygonController extends Controller
      */
     public function show(Polygon $polygon)
     {
+        $this->authorize('view', $polygon);
+
         $polygon->load(['coords', 'projects']);
         return new PolygonResource($polygon);
     }
@@ -92,6 +114,8 @@ class PolygonController extends Controller
      */
     public function update(Request $request, Polygon $polygon)
     {
+        $this->authorize('update', $polygon);
+
         $validated = $request->validate([
             'project_id'   => 'sometimes|exists:projects,id',
             'polygon_name' => 'sometimes|string|max:50',
@@ -106,6 +130,9 @@ class PolygonController extends Controller
             }
 
             if (isset($validated['project_id'])) {
+                $project = Project::query()->findOrFail($validated['project_id']);
+                $this->authorize('view', $project);
+
                 $polygon->projects()->sync([$validated['project_id']]);
             }
 
@@ -123,6 +150,8 @@ class PolygonController extends Controller
      */
     public function bulkUpdate(Request $request)
     {
+        $this->authorize('update', Polygon::class);
+
         $validated = $request->validate([
             'polygons' => 'required|array|min:1',
             'polygons.*.polygon_id' => 'required|exists:polygons,id',
@@ -148,6 +177,9 @@ class PolygonController extends Controller
                 }
 
                 if (array_key_exists('project_id', $polygonData)) {
+                    $project = Project::query()->findOrFail($polygonData['project_id']);
+                    $this->authorize('view', $project);
+
                     $polygon->projects()->sync([$polygonData['project_id']]);
                 }
 
@@ -168,6 +200,8 @@ class PolygonController extends Controller
      */
     public function destroy(Polygon $polygon)
     {
+        $this->authorize('delete', $polygon);
+
         $polygon->delete();
         return response()->noContent();
     }
@@ -177,6 +211,8 @@ class PolygonController extends Controller
      */
     public function bulkDestroy(Request $request)
     {
+        $this->authorize('delete', Polygon::class);
+
         $validated = $request->validate([
             'polygon_ids' => 'required|array|min:1',
             'polygon_ids.*' => 'required|exists:polygons,id',
@@ -189,5 +225,10 @@ class PolygonController extends Controller
                 'deleted_count' => $deletedCount,
             ]);
         });
+    }
+
+    private function currentRoleLevel(Request $request): int
+    {
+        return Rbac::levelOf($request->user());
     }
 }
