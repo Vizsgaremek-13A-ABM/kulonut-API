@@ -36,12 +36,12 @@ class Rbac
     public static function levelOf(?User $user): int
     {
         if (! $user) {
-            return self::userLevel();
+            return 0;
         }
 
         $user->loadMissing('role');
 
-        return (int) ($user->role?->level ?? self::userLevel());
+        return (int) ($user->role?->level ?? 0);
     }
 
     public static function hasMinimumLevel(?User $user, int $minimumLevel): bool
