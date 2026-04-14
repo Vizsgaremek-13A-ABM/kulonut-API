@@ -11,7 +11,6 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Support\Rbac;
 
 Route::middleware('throttle:5,1')->controller(AuthController::class)->group(function () {
     Route::post('/auth/register', 'register');
@@ -33,7 +32,7 @@ Route::middleware('auth.optional.sanctum')->group(function () {
     Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
 });
 
-Route::middleware(['auth:sanctum', 'role.level:' . Rbac::userLevel()])->group(function () {
+Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.user_level')])->group(function () {
     Route::apiResource('geodesies', GeodesyController::class)->only(['index', 'show']);
     Route::get('/geodesies/{geodesy}/projects', [GeodesyController::class, 'getProjects']);
 
@@ -52,7 +51,7 @@ Route::middleware(['auth:sanctum', 'role.level:' . Rbac::userLevel()])->group(fu
     Route::post('/users/{user}/profile-icon', [UserController::class, 'uploadProfileIcon']);
 });
 
-Route::middleware(['auth:sanctum', 'role.level:' . Rbac::employeeLevel()])->group(function () {
+Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.employee_level')])->group(function () {
     Route::controller(PolygonController::class)->group(function () {
         Route::post('/polygons/bulk', 'bulkStore');
         Route::put('/polygons/bulk', 'bulkUpdate');
@@ -69,7 +68,7 @@ Route::middleware(['auth:sanctum', 'role.level:' . Rbac::employeeLevel()])->grou
     Route::apiResource('designers', DesignerController::class)->except(['index', 'show']);
 });
 
-Route::middleware(['auth:sanctum', 'role.level:' . Rbac::adminLevel()])->group(function () {
+Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.admin_level')])->group(function () {
     Route::apiResource('users', UserController::class);
     Route::apiResource('roles', RoleController::class);
 });
