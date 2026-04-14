@@ -26,16 +26,16 @@ class PolygonPolicy
 
     public function create(?User $user): bool
     {
-        return Rbac::hasMinimumLevel($user, Rbac::editorLevel());
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }
 
     public function update(?User $user, Polygon $polygon): bool
     {
-        return Rbac::hasMinimumLevel($user, Rbac::editorLevel());
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }
 
     public function delete(?User $user, Polygon $polygon): bool
     {
-        return Rbac::hasMinimumLevel($user, Rbac::editorLevel());
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }
 }

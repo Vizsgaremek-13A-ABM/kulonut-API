@@ -26,16 +26,16 @@ class CoordPolicy
 
     public function create(?User $user): bool
     {
-        return Rbac::hasMinimumLevel($user, Rbac::editorLevel());
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }
 
     public function update(?User $user, Coord $coord): bool
     {
-        return Rbac::hasMinimumLevel($user, Rbac::editorLevel());
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }
 
     public function delete(?User $user, Coord $coord): bool
     {
-        return Rbac::hasMinimumLevel($user, Rbac::editorLevel());
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }
 }

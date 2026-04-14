@@ -15,6 +15,9 @@ use App\Policies\UserPolicy;
 use App\Support\Rbac;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Dedoc\Scramble\Scramble;
+use Dedoc\Scramble\Support\Generator\OpenApi;
+use Dedoc\Scramble\Support\Generator\SecurityScheme;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,6 +46,13 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return null;
+        });
+
+        Scramble::configure()
+        ->withDocumentTransformers(function (OpenApi $openApi) {
+            $openApi->secure(
+                SecurityScheme::http('bearer')
+            );
         });
 
         Gate::define('viewApiDocs', function ($user = null) {
