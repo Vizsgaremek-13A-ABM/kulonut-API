@@ -34,7 +34,17 @@ class PolygonPolicy
         return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }
 
+    public function updateAny(?User $user): bool
+    {
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
+    }
+
     public function delete(?User $user, Polygon $polygon): bool
+    {
+        return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
+    }
+
+    public function deleteAny(?User $user): bool
     {
         return Rbac::hasMinimumLevel($user, Rbac::employeeLevel());
     }

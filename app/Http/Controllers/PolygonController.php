@@ -150,7 +150,7 @@ class PolygonController extends Controller
      */
     public function bulkUpdate(Request $request)
     {
-        $this->authorize('update', Polygon::class);
+        $this->authorize('updateAny', Polygon::class);
 
         $validated = $request->validate([
             'polygons' => 'required|array|min:1',
@@ -211,7 +211,7 @@ class PolygonController extends Controller
      */
     public function bulkDestroy(Request $request)
     {
-        $this->authorize('delete', Polygon::class);
+        $this->authorize('deleteAny', Polygon::class);
 
         $validated = $request->validate([
             'polygon_ids' => 'required|array|min:1',
