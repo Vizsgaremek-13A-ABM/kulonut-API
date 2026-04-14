@@ -7,19 +7,25 @@ use App\Models\User;
 
 class Rbac
 {
-    public static function guestLevel(): int
-    {
-        return 0;
-    }
 
     public static function userLevel(): int
     {
         return Role::userLevel();
     }
 
-    public static function editorLevel(): int
+    public static function privilegedUserLevel(): int
     {
-        return Role::editorLevel();
+        return Role::privilegedUserLevel();
+    }
+
+    public static function trustedUserLevel(): int
+    {
+        return Role::trustedUserLevel();
+    }
+
+    public static function employeeLevel(): int
+    {
+        return Role::employeeLevel();
     }
 
     public static function adminLevel(): int
@@ -30,12 +36,12 @@ class Rbac
     public static function levelOf(?User $user): int
     {
         if (! $user) {
-            return self::guestLevel();
+            return self::userLevel();
         }
 
         $user->loadMissing('role');
 
-        return (int) ($user->role?->level ?? self::guestLevel());
+        return (int) ($user->role?->level ?? self::userLevel());
     }
 
     public static function hasMinimumLevel(?User $user, int $minimumLevel): bool

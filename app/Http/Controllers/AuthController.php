@@ -13,6 +13,7 @@ class AuthController extends Controller
 {
     /**
      * Register a new user.
+     * @unauthenticated
      */
     public function register(Request $request)
     {
@@ -45,6 +46,7 @@ class AuthController extends Controller
 
     /**
      * Login a user and create a token.
+     * @unauthenticated
      */
     public function login(Request $request)
     {

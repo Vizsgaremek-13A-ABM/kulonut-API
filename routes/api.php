@@ -32,7 +32,7 @@ Route::middleware('auth.optional.sanctum')->group(function () {
     Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
 });
 
-Route::middleware(['auth:sanctum', 'role.level:10'])->group(function () {
+Route::middleware(['auth:sanctum', 'role.level:1'])->group(function () {
     Route::apiResource('geodesies', GeodesyController::class)->only(['index', 'show']);
     Route::get('/geodesies/{geodesy}/projects', [GeodesyController::class, 'getProjects']);
 
