@@ -59,14 +59,14 @@ Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.employee_level')
         Route::delete('/polygons/bulk', 'bulkDestroy');
     });
 
-    Route::apiResource('projects', ProjectController::class)->except(['index', 'show']);
-    Route::apiResource('polygons', PolygonController::class)->except(['index', 'show']);
-    Route::apiResource('coords', CoordController::class)->except(['index', 'show']);
+    Route::apiResource('projects', ProjectController::class);
+    Route::apiResource('polygons', PolygonController::class);
+    Route::apiResource('coords', CoordController::class);
 
-    Route::apiResource('geodesies', GeodesyController::class)->except(['index', 'show']);
-    Route::apiResource('clients', ClientController::class)->except(['index', 'show']);
-    Route::apiResource('general-designers', GeneralDesignerController::class)->except(['index', 'show']);
-    Route::apiResource('designers', DesignerController::class)->except(['index', 'show']);
+    Route::apiResource('geodesies', GeodesyController::class);
+    Route::apiResource('clients', ClientController::class);
+    Route::apiResource('general-designers', GeneralDesignerController::class);
+    Route::apiResource('designers', DesignerController::class);
 });
 
 Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.admin_level')])->group(function () {

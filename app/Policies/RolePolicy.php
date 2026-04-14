@@ -10,12 +10,12 @@ class RolePolicy
 {
     public function viewAny(?User $user): bool
     {
-        return Rbac::isAdmin($user);
+        return Rbac::hasMinimumLevel($user, Rbac::userLevel());
     }
 
     public function view(?User $user, Role $role): bool
     {
-        return Rbac::isAdmin($user);
+        return Rbac::hasMinimumLevel($user, Rbac::userLevel());
     }
 
     public function create(?User $user): bool
