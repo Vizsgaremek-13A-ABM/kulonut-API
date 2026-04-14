@@ -48,6 +48,7 @@ Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.user_level')])->
     Route::apiResource('polygons', PolygonController::class)->only(['index', 'show']);
     Route::apiResource('coords', CoordController::class)->only(['index', 'show']);
 
+    Route::apiResource('roles', RoleController::class);
     Route::post('/users/{user}/profile-icon', [UserController::class, 'uploadProfileIcon']);
 });
 
@@ -70,5 +71,4 @@ Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.employee_level')
 
 Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.admin_level')])->group(function () {
     Route::apiResource('users', UserController::class);
-    Route::apiResource('roles', RoleController::class);
 });
