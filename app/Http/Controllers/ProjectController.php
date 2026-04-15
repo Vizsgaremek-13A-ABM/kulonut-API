@@ -24,7 +24,8 @@ class ProjectController extends Controller
         $this->authorize('viewAny', Project::class);
 
         $projects = Project::with(['client', 'geodesy', 'designer', 'generalDesigner'])
-            ->where('min_role_level', '<=', $this->currentRoleLevel($request))->get();
+            ->where('min_role_level', '<=', $this->currentRoleLevel($request))
+            ->get();
 
         return ProjectResource::collection($projects);
     }
@@ -36,7 +37,9 @@ class ProjectController extends Controller
     {
         $this->authorize('viewAny', Project::class);
 
-        $projects = Project::with('polygons:id')->where('min_role_level', '<=', $this->currentRoleLevel($request))->get();
+        $projects = Project::with('polygons:id')
+            ->where('min_role_level', '<=', $this->currentRoleLevel($request))
+            ->get();
 
         return $projects->map(fn($project) => [
             'project_id' => $project->id,

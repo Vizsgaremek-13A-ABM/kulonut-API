@@ -41,7 +41,7 @@ class Rbac
 
         $user->loadMissing('role');
 
-        return (int) ($user->role?->level ?? 0);
+        return (int) ($user->role?->level ?? self::userLevel());
     }
 
     public static function hasMinimumLevel(?User $user, int $minimumLevel): bool
