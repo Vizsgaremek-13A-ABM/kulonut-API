@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coords', function (Blueprint $table) {
-            $table->id();
-            $table->decimal('latitude', 8, 6);
-            $table->decimal('longitude', 9, 6);
-
-            $table->foreignId('polygon_id')->constrained('polygons')->cascadeOnDelete();
-
-            $table->timestamps();
+        Schema::table('coords', function (Blueprint $table) {
+            $table->decimal('latitude', 8, 6)->change();
+            $table->decimal('longitude', 9, 6)->change();
         });
     }
 
@@ -27,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('coords');
+        Schema::table('coords', function (Blueprint $table) {
+            $table->decimal('latitude', 8, 2)->change();
+            $table->decimal('longitude', 8, 2)->change();
+        });
     }
 };

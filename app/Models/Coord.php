@@ -12,8 +12,8 @@ class Coord extends Model
     protected $fillable = ['latitude', 'longitude', 'polygon_id'];
 
     protected $casts = [
-        'latitude' => 'float',
-        'longitude' => 'float',
+        'latitude' => 'decimal:6',
+        'longitude' => 'decimal:6',
     ];
 
     public function polygon()
