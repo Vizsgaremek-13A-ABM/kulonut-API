@@ -21,8 +21,10 @@ class PolygonController extends Controller
         $roleLevel = $this->currentRoleLevel(request());
 
         $polygons = Polygon::with(['coords', 'projects'])
-            ->whereHas('projects', function ($query) use ($roleLevel) {
-                $query->where('min_role_level', '<=', $roleLevel);
+            ->where(function ($query) use ($roleLevel) {
+                $query->whereHas('projects', function ($projectQuery) use ($roleLevel) {
+                    $projectQuery->where('min_role_level', '<=', $roleLevel);
+                })->orWhereDoesntHave('projects');
             })->get();
 
         return PolygonResource::collection($polygons);
@@ -224,6 +226,59 @@ class PolygonController extends Controller
             return response()->json([
                 'deleted_count' => $deletedCount,
             ]);
+        });
+    }
+
+    /**
+     * Unlink a polygon from a specific project.
+     */
+    public function unlink(Polygon $polygon, Project $project)
+    {
+        $this->authorize('update', $polygon);
+        $this->authorize('view', $project);
+
+        $polygon->projects()->detach($project->id);
+
+        return new PolygonResource($polygon->load(['coords', 'projects']));
+    }
+
+    /**
+     * Bulk unlink polygons from projects.
+     */
+    public function bulkUnlink(Request $request)
+    {
+        $this->authorize('updateAny', Polygon::class);
+
+        $validated = $request->validate([
+            'links' => 'required|array|min:1',
+            'links.*.polygon_id' => 'required|exists:polygons,id',
+            'links.*.project_id' => 'required|exists:projects,id',
+        ]);
+
+        return DB::transaction(function () use ($validated) {
+            $polygonIds = collect($validated['links'])->pluck('polygon_id')->all();
+            $projectIds = collect($validated['links'])->pluck('project_id')->all();
+
+            $polygonsById = Polygon::whereIn('id', $polygonIds)->get()->keyBy('id');
+            $projectsById = Project::whereIn('id', $projectIds)->get()->keyBy('id');
+
+            $updatedPolygons = collect($validated['links'])->map(function ($linkData) use ($polygonsById, $projectsById) {
+                $polygon = $polygonsById->get($linkData['polygon_id']);
+                $project = $projectsById->get($linkData['project_id']);
+
+                if (!$polygon || !$project) {
+                    abort(404);
+                }
+
+                $this->authorize('update', $polygon);
+                $this->authorize('view', $project);
+
+                $polygon->projects()->detach($project->id);
+
+                return $polygon->load(['coords', 'projects']);
+            });
+
+            return PolygonResource::collection($updatedPolygons);
         });
     }
 
