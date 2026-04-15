@@ -19,6 +19,10 @@ class PolygonPolicy
 
         $polygon->loadMissing('projects');
 
+        if ($polygon->projects->isEmpty()) {
+            return Rbac::hasMinimumLevel($user, Rbac::userLevel());
+        }
+
         return $polygon->projects->contains(function ($project) use ($userLevel): bool {
             return $userLevel >= (int) ($project->min_role_level ?? 1);
         });
