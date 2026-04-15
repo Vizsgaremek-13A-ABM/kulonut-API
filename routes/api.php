@@ -29,6 +29,7 @@ Route::middleware('auth.optional.sanctum')->group(function () {
         Route::get('/projects/{project}/polygons', 'polygons');
     });
 
+    
     Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
 });
 
