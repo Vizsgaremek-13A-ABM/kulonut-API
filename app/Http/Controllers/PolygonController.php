@@ -21,8 +21,11 @@ class PolygonController extends Controller
         $roleLevel = $this->currentRoleLevel(request());
 
         $polygons = Polygon::with(['coords', 'projects'])
-            ->whereHas('projects', function ($query) use ($roleLevel) {
-                $query->where('min_role_level', '<=', $roleLevel);
+            ->where(function ($query) use ($roleLevel) {
+                $query->whereHas('projects', function ($projectQuery) use ($roleLevel) {
+                    $projectQuery->where('min_role_level', '<=', $roleLevel);
+                })->orWhereDoesntHave('projects');
+
             })->get();
 
         return PolygonResource::collection($polygons);
