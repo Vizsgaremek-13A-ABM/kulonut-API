@@ -246,13 +246,9 @@ class PolygonController extends Controller
     /**
      * Bulk unlink polygons from projects.
      */
-        public function bulkUnlink(Request $request)
+    public function bulkUnlink(Request $request)
     {
         $this->authorize('updateAny', Polygon::class);
-
-        $request->merge([
-            'links' => $this->normalizeBulkUnlinkLinks($request),
-        ]);
 
         $validated = $request->validate([
             'links' => 'required|array|min:1',
