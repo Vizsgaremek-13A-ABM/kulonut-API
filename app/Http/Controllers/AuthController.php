@@ -190,7 +190,7 @@ class AuthController extends Controller
      *
      * @unauthenticated
      */
-    public function verifyEmail(Request $request, int $id, string $hash)
+    public function verifyEmail(int $id, string $hash)
     {
         $user = User::findOrFail($id);
 
