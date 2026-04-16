@@ -21,8 +21,11 @@ class PolygonController extends Controller
         $roleLevel = $this->currentRoleLevel(request());
 
         $polygons = Polygon::with(['coords', 'projects'])
-            ->whereHas('projects', function ($query) use ($roleLevel) {
-                $query->where('min_role_level', '<=', $roleLevel);
+            ->where(function ($query) use ($roleLevel) {
+                $query->whereHas('projects', function ($projectQuery) use ($roleLevel) {
+                    $projectQuery->where('min_role_level', '<=', $roleLevel);
+                })->orWhereDoesntHave('projects');
+
             })->get();
 
         return PolygonResource::collection($polygons);
@@ -247,10 +250,6 @@ class PolygonController extends Controller
     {
         $this->authorize('updateAny', Polygon::class);
 
-        $request->merge([
-            'links' => $this->normalizeBulkUnlinkLinks($request),
-        ]);
-
         $validated = $request->validate([
             'links' => 'required|array|min:1',
             'links.*.polygon_id' => 'required|exists:polygons,id',
@@ -282,33 +281,6 @@ class PolygonController extends Controller
 
             return PolygonResource::collection($updatedPolygons);
         });
-    }
-
-    /**
-     * Accepts multiple payload shapes and normalizes to links[] for bulk unlink.
-     */
-    private function normalizeBulkUnlinkLinks(Request $request): array
-    {
-        $links = $request->input('links');
-
-        // Scramble/form clients sometimes send links as a JSON string.
-        if (is_string($links)) {
-            $decoded = json_decode($links, true);
-
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                $links = $decoded;
-            }
-        }
-
-        // If the raw body is an array, treat it as links directly.
-        if ($links === null) {
-            $jsonPayload = $request->json()->all();
-            if (is_array($jsonPayload) && array_is_list($jsonPayload)) {
-                $links = $jsonPayload;
-            }
-        }
-
-        return is_array($links) ? $links : [];
     }
 
     private function currentRoleLevel(Request $request): int

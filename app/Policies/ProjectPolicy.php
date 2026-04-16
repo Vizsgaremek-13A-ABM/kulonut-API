@@ -35,6 +35,6 @@ class ProjectPolicy
 
     private function projectMinLevel(Project $project): int
     {
-        return (int) ($project->min_role_level ?? Rbac::userLevel());
+        return (int) ($project->min_role_level ?? (int) config('rbac.user_level', 1));
     }
 }
