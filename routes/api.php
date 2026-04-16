@@ -55,7 +55,7 @@ Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.employee_level')
         Route::post('/polygons/bulk', 'bulkStore');
         Route::put('/polygons/bulk', 'bulkUpdate');
         Route::delete('/polygons/bulk', 'bulkDestroy');
-        Route::delete('/polygons/projects/bulk', 'bulkUnlink');
+        Route::post('/polygons/projects/bulk', 'bulkUnlink');
         Route::delete('/polygons/{polygon}/projects/{project}', 'unlink');
     });
 
