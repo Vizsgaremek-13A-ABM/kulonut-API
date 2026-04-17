@@ -19,7 +19,7 @@ Route::middleware('throttle:5,1')->controller(AuthController::class)->group(func
     Route::post('/auth/reset-password', 'resetPassword')->name('password.update');
 });
 
-Route::middleware('auth:sanctum')->controller(AuthController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->controller(AuthController::class)->group(function () {
     Route::post('/auth/logout', 'logout');
     Route::get('/auth/user', 'me');
     Route::post('/auth/update-password', 'updatePassword');
@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->controller(AuthController::class)->group(func
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
 
-Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.user_level')])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'role.level:' . config('rbac.user_level')])->group(function () {
     Route::controller(ProjectController::class)->group(function () {
         Route::get('/projects/map', 'mapView');
         Route::get('/projects/{project}/polygons', 'polygons');
@@ -55,7 +55,7 @@ Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.user_level')])->
     Route::post('/users/{user}/profile-icon', [UserController::class, 'uploadProfileIcon']);
 });
 
-Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.employee_level')])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'role.level:' . config('rbac.employee_level')])->group(function () {
     Route::controller(PolygonController::class)->group(function () {
         Route::post('/polygons/bulk', 'bulkStore');
         Route::put('/polygons/bulk', 'bulkUpdate');
@@ -74,6 +74,6 @@ Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.employee_level')
     Route::apiResource('designers', DesignerController::class)->except(['index', 'show']);
 });
 
-Route::middleware(['auth:sanctum', 'role.level:' . config('rbac.admin_level')])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'role.level:' . config('rbac.admin_level')])->group(function () {
     Route::apiResource('users', UserController::class);
 });
