@@ -8,6 +8,8 @@ data:
   APP_DEBUG: "false"
   APP_URL: "https://kulonutapi.jcloud.jedlik.cloud"
 
+  FRONTEND_URL: "https://kulonut-vizsgaremek.jcloud.jedlik.cloud"
+
   DB_CONNECTION: "mysql"
   DB_HOST: "jcloud02.jedlik.eu"
   DB_PORT: "3306"

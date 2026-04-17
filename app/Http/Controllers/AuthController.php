@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Events\Verified;
 
 class AuthController extends Controller
 {
@@ -33,6 +35,8 @@ class AuthController extends Controller
 
         $validated['role_id'] = $defaultRoleId;
         $user = User::create($validated);
+
+        $user->sendEmailVerificationNotification();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -96,11 +100,93 @@ class AuthController extends Controller
     }
 
     /**
+     * Send a verification email to the user.
+     */
+    public function sendVerificationEmail(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified.'], 400);
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Verification link sent.']);
+    }
+
+    /**
+     * Mark the user's email address as verified.
+     */
+    public function verifyEmail(Request $request)
+    {
+        $user = User::findOrFail($request->route('id'));
+
+        if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+            return response()->json(['message' => 'Invalid verification link.'], 400);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified.'], 400);
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
+        return redirect(env('FRONTEND_URL') . '/email-verified');
+    }
+
+    /**
+     * Handle a forgot password request.
+     * @unauthenticated
+     */
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['message' => $status]);
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [$status],
+        ]);
+    }
+
+    /**
+     * Handle a reset password request.
+     * @unauthenticated
+     */
+    public function resetPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\.]).{8,}$/|confirmed',
+        ]);
+
+        $status = Password::reset($validated, function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ])->save();
+        });
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(['message' => __($status)]);
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [__($status)],
+        ]);
+    }
+
+    /**
      * Update the authenticated user's password.
      */
     public function updatePassword(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'current_password' => 'required|string',
             'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\.]).{8,}$/|confirmed',
         ]);
@@ -113,14 +199,10 @@ class AuthController extends Controller
             ]);
         }
 
-        if (Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'password' => ['The new password cannot be the same as your current password.'],
-            ]);
-        }
+        $user->forceFill([
+            'password' => $validated['password'],
+        ])->save();
 
-        $user->update(['password' => $request->password]);
-
-        return response()->json(['message' => 'Password updated successfully.'], 201);
+        return response()->json(['message' => 'Password updated successfully.']);
     }
 }
