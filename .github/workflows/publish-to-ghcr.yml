@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - kube
-      - 51-fix-docker-and-also-put-in-valid-roles
+      - 74-add-forgot-password-and-email-verification-systems
   workflow_dispatch:
 
 jobs:

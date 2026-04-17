@@ -120,19 +120,20 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($request->route('id'));
 
+        $redirectUrl = env('FRONTEND_URL') . '/email-verified';
         if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
-            return response()->json(['message' => 'Invalid verification link.'], 400);
+            return redirect($redirectUrl . '?status=error&message=' . urlencode('Invalid verification link.'));
         }
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified.'], 400);
+            return redirect($redirectUrl . '?status=error&message=' . urlencode('Email already verified.'));
         }
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
 
-        return redirect(env('FRONTEND_URL') . '/email-verified');
+        return redirect($redirectUrl . '?status=success&message=' . urlencode('Email verified successfully.'));
     }
 
     /**
@@ -173,11 +174,11 @@ class AuthController extends Controller
         });
 
         if ($status === Password::PASSWORD_RESET) {
-            return response()->json(['message' => __($status)]);
+            return response()->json(['message' => $status]);
         }
 
         throw ValidationException::withMessages([
-            'email' => [__($status)],
+            'email' => [$status],
         ]);
     }
 
