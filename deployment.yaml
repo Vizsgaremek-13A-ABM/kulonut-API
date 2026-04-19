@@ -129,12 +129,6 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "2m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
-    nginx.ingress.kubernetes.io/server-snippet: |
-      add_header X-Content-Type-Options "nosniff" always;
-      add_header X-Frame-Options "DENY" always;
-      add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-      add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
-      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
 spec:
   ingressClassName: nginx
   tls:
