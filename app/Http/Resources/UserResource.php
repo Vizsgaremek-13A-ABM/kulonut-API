@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'avatar' => $avatar,
             'role' => new RoleResource($this->whenLoaded('role')),
+            'email_verified_at' => $this->email_verified_at,
             'joined_at' => $this->created_at->format('Y-m-d'),
         ];
     }
