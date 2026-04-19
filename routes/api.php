@@ -19,11 +19,14 @@ Route::middleware('throttle:auth')->controller(AuthController::class)->group(fun
     Route::post('/auth/reset-password', 'resetPassword')->name('password.update');
 });
 
-Route::middleware(['auth:sanctum', 'verified', 'throttle:api'])->controller(AuthController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->controller(AuthController::class)->group(function () {
     Route::post('/auth/logout', 'logout');
+    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware('throttle:verification');
+});
+
+Route::middleware(['auth:sanctum', 'verified', 'throttle:api'])->controller(AuthController::class)->group(function () {
     Route::get('/auth/user', 'me');
     Route::post('/auth/update-password', 'updatePassword');
-    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware('throttle:verification');
 });
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['signed', 'throttle:verification'])->name('verification.verify');
