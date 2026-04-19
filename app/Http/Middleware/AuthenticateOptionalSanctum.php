@@ -14,9 +14,14 @@ class AuthenticateOptionalSanctum
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->bearerToken()) {
-            if (Auth::guard('sanctum')->check()) {
-                Auth::setUser(Auth::guard('sanctum')->user());
+        $token = $request->bearerToken();
+
+        if ($token) {
+            $user = Auth::guard('sanctum')->user();
+
+            if ($user) {
+                Auth::setUser($user);
+                $request->setUserResolver(static fn () => $user);
             }
         }
 
