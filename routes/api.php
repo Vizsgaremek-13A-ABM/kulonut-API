@@ -12,19 +12,16 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('throttle:auth')->controller(AuthController::class)->group(function () {
+Route::middleware('throttle:5,1')->controller(AuthController::class)->group(function () {
     Route::post('/auth/register', 'register');
     Route::post('/auth/login', 'login');
     Route::post('/auth/forgot-password', 'forgotPassword')->name('password.email');
     Route::post('/auth/reset-password', 'resetPassword')->name('password.update');
+    Route::post('/auth/logout', 'logout')->middleware('auth:sanctum');
+    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware(['throttle:60,1', 'auth:sanctum']);
 });
 
-Route::middleware(['auth:sanctum', 'throttle:api'])->controller(AuthController::class)->group(function () {
-    Route::post('/auth/logout', 'logout');
-    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware('throttle:verification');
-});
-
-Route::middleware(['auth:sanctum', 'verified', 'throttle:api'])->controller(AuthController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->controller(AuthController::class)->group(function () {
     Route::get('/auth/user', 'me');
     Route::post('/auth/update-password', 'updatePassword');
 });
