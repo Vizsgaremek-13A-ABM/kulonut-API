@@ -18,7 +18,7 @@ Route::middleware('throttle:5,1')->controller(AuthController::class)->group(func
     Route::post('/auth/forgot-password', 'forgotPassword')->name('password.email');
     Route::post('/auth/reset-password', 'resetPassword')->name('password.update');
     Route::post('/auth/logout', 'logout')->middleware('auth:sanctum');
-    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware('throttle:60,1');
+    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware(['throttle:60,1', 'auth:sanctum']);
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->controller(AuthController::class)->group(function () {
