@@ -65,7 +65,7 @@ class AuthController extends Controller
         $email = strtolower(trim((string) $request->input('email')));
         $request->merge(['email' => $email]);
 
-        $user = User::where('email', $email)->first();
+        $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
