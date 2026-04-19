@@ -59,30 +59,30 @@ spec:
                 name: kulonut-api-secret
             - secretRef:
                 name: kulonut-email-secret
-          volumeMounts:
-            - name: kulonut-storage
-              mountPath: /var/www/html/storage/app/public
-      volumes:
-        - name: kulonut-storage
-          persistentVolumeClaim:
-            claimName: kulonut-storage
+#           volumeMounts:
+#             - name: kulonut-storage
+#               mountPath: /var/www/html/storage/app/public
+#       volumes:
+#         - name: kulonut-storage
+#           persistentVolumeClaim:
+#             claimName: kulonut-storage
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: kulonut-storage
-spec:
-  storageClassName: standard
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: kulonut-storage
+# spec:
+#   storageClassName: standard
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 1Gi
 
-  selector:
-    matchLabels:
-      student: kiss-martin2
+#   selector:
+#     matchLabels:
+#       student: kiss-martin2
 
 ---
 apiVersion: v1
