@@ -46,11 +46,11 @@ class ResetPasswordNotification extends Notification
         $resetUrl = $frontendUrl . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
 
         return (new MailMessage)
-            ->subject(Lang::get('Reset Password Notification'))
-            ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::get('Reset Password'), url($resetUrl))
-            ->line(Lang::get('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
-            ->line(Lang::get('If you did not request a password reset, no further action is required.'));
+            ->subject(Lang::get('Jelszó visszaállítás'))
+            ->line(Lang::get('Ezt az e-mailt azért kapta, mert kaptunk egy jelszó-visszaállítási kérelmet a fiókjához.'))
+            ->action(Lang::get('Jelszó visszaállítás'), url($resetUrl))
+            ->line(Lang::get('A link :count percen belül lejár.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
+            ->line(Lang::get('Ha nem ön kérelmezte a jelszó visszaállítást, hagyja figyelmen kívül ez az e-mailt'));
     }
 
     /**
