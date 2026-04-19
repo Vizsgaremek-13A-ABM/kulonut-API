@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - kube
-      - 74-add-forgot-password-and-email-verification-systems
+      - 95-add-custom-verify-email-notification
   workflow_dispatch:
 
 jobs:
