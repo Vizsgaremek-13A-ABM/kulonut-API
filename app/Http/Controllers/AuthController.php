@@ -26,8 +26,6 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\.]).{8,}$/|confirmed',
         ]);
 
-        $validated['email'] = strtolower(trim($validated['email']));
-
         $defaultRoleId = Role::roleIdFor(Role::USER);
 
         if ($defaultRoleId === null) {
@@ -62,10 +60,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $email = strtolower(trim((string) $request->input('email')));
-        $request->merge(['email' => $email]);
-
-        $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
+        $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -150,12 +145,14 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        Password::sendResetLink([
-            'email' => strtolower(trim((string) $request->input('email'))),
-        ]);
+        $status = Password::sendResetLink($request->only('email'));
 
-        return response()->json([
-            'message' => 'If the account exists, a password reset link has been sent.',
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['message' => $status]);
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [$status],
         ]);
     }
 
@@ -170,8 +167,6 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\.]).{8,}$/|confirmed',
         ]);
-
-        $validated['email'] = strtolower(trim($validated['email']));
 
         $status = Password::reset($validated, function ($user, $password) {
             $user->forceFill([
