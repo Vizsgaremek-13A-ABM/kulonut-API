@@ -17,13 +17,13 @@ Route::middleware('throttle:auth')->controller(AuthController::class)->group(fun
     Route::post('/auth/login', 'login');
     Route::post('/auth/forgot-password', 'forgotPassword')->name('password.email');
     Route::post('/auth/reset-password', 'resetPassword')->name('password.update');
+    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware('throttle:verification');
+    Route::post('/auth/logout', 'logout')->middleware('auth:sanctum');
 });
 
 Route::middleware(['auth:sanctum', 'verified', 'throttle:api'])->controller(AuthController::class)->group(function () {
-    Route::post('/auth/logout', 'logout');
     Route::get('/auth/user', 'me');
     Route::post('/auth/update-password', 'updatePassword');
-    Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware('throttle:verification');
 });
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['signed', 'throttle:verification'])->name('verification.verify');
