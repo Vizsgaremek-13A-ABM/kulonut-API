@@ -46,6 +46,7 @@ class ResetPasswordNotification extends Notification
         $resetUrl = $frontendUrl . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
 
         return (new MailMessage)
+            ->greeting(Lang::get('Üdv.'))
             ->subject(Lang::get('Jelszó visszaállítás'))
             ->line(Lang::get('Ezt az e-mailt azért kapta, mert kaptunk egy jelszó-visszaállítási kérelmet a fiókjához.'))
             ->action(Lang::get('Jelszó visszaállítás'), url($resetUrl))

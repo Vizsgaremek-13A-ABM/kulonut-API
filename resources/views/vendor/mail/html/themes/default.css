@@ -241,7 +241,7 @@ img {
 .button {
     -webkit-text-size-adjust: none;
     border-radius: 0;
-    color: #ffffff;
+    color: blue !important;
     display: inline-block;
     font-weight: 700;
     overflow: hidden;
@@ -251,11 +251,11 @@ img {
 
 .button-blue,
 .button-primary {
-    background-color: #e67b11;
-    border-bottom: 9px solid #e67b11;
-    border-left: 20px solid #e67b11;
-    border-right: 20px solid #e67b11;
-    border-top: 9px solid #e67b11;
+    background-color: #6da5f2;
+    border-bottom: 9px solid #6da5f2;
+    border-left: 20px solid #6da5f2;
+    border-right: 20px solid #6da5f2;
+    border-top: 9px solid #6da5f2;
     color: #ffffff;
 }
 
