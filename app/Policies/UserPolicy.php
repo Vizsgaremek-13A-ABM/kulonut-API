@@ -27,6 +27,11 @@ class UserPolicy
         return Rbac::isAdmin($user);
     }
 
+    public function updateProfile(?User $user, User $model): bool
+    {
+        return $user->id === $model->id;
+    }
+
     public function delete(?User $user, User $model): bool
     {
         return Rbac::isAdmin($user);

@@ -70,6 +70,25 @@ class UserController extends Controller
     }
 
     /**
+     * Update the authenticated user's profile data.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        $this->authorize('updateProfile', $user);
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:100',
+            'display_name' => 'sometimes|nullable|string|max:100',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($validated);
+
+        return new UserResource($user->load('role'));
+    }
+
+    /**
      * Upload and save the user's profile icon.
      */
     public function uploadProfileIcon(Request $request, User $user)

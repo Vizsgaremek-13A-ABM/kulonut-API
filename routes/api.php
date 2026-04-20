@@ -21,9 +21,10 @@ Route::middleware('throttle:5,1')->controller(AuthController::class)->group(func
     Route::post('/email/verification-notification', 'sendVerificationEmail')->middleware(['throttle:60,1', 'auth:sanctum']);
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->controller(AuthController::class)->group(function () {
-    Route::get('/auth/user', 'me');
-    Route::post('/auth/update-password', 'updatePassword');
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/auth/user', [AuthController::class, 'me']);
+    Route::post('/auth/update-password', [AuthController::class, 'updatePassword']);
+    Route::put('/user/profile', [UserController::class, 'updateProfile']);
 });
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
