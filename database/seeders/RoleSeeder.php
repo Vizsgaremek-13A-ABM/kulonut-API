@@ -12,12 +12,30 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($index = 1; $index <= 10; $index++) {
-            Role::updateOrCreate(['id' => $index], [
-                'role_name' => "Role {$index}",
-                'description' => "Seeded role {$index}",
-                'level' => $index,
-            ]);
-        }
+        Role::create([
+            'role_name' => "Admin",
+            'description' => "Adminisztrátor",
+            'level' => 99,
+        ]);
+        Role::create([
+            'role_name' => "Alkalmazott",
+            'description' => "Alkalmazott",
+            'level' => 50,
+        ]);
+        Role::create([
+            'role_name' => "Bizalmi Felhasználó",
+            'description' => "Bizalmi Felhasználó",
+            'level' => 25,
+        ]);
+        Role::create([
+            'role_name' => "Kiemelt Felhasználó",
+            'description' => "Kiemelt Felhasználó",
+            'level' => 10,
+        ]);
+        Role::create([
+            'role_name' => "Felhasználó",
+            'description' => "Felhasználó",
+            'level' => 1,
+        ]);
     }
 }
