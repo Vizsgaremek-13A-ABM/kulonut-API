@@ -3,9 +3,7 @@ name: Build Docker Image, Push to GHCR, and Deploy to Kubernetes
 on:
   push:
     branches:
-      - main
       - kube
-      - 74-add-forgot-password-and-email-verification-systems
   workflow_dispatch:
 
 jobs:
