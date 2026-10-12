@@ -17,6 +17,7 @@ class ClientResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'projects' => $this->projects()->count(),
         ];
     }
 }
